@@ -1,8 +1,8 @@
-class Experiences {
-    riding = { amount: 0, level: "E" }
-    flying = { amount: 0, level: "E" }
-    armor = { amount: 0, level: "E" }
-    authority = { amount: 0, level: "E" }
+class _ExperiencesAptitude {
+    riding = 0
+    flying = 0
+    armor = 0
+    authority = 0
 
     constructor(req) {
         const experiences = req.globalExperiences
@@ -28,4 +28,4 @@ class Experiences {
     }
 }
 
-export default Experiences
+export default _ExperiencesAptitude

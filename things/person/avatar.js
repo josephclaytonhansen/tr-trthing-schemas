@@ -24,9 +24,13 @@ const AvatarSchema = new Schema({
     experienceAptitudes: {
         type: Object,
     },
+    classExps: {
+        type: Object,
+    },
     level: Number,
     unitClass: {
-        type: Object,
+        ref: 'UnitClass',
+        type: Schema.Types.ObjectId
     },
     exp: Number,
     battalion: {

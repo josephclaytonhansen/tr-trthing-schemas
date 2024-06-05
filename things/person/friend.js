@@ -36,7 +36,8 @@ const FriendSchema = new Schema({
     },
     level: Number,
     unitClass: {
-        type: Object,
+        ref: 'UnitClass',
+        type: Schema.Types.ObjectId
     },
     exp: Number,
     battalion: {

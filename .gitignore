@@ -3,3 +3,5 @@ package-lock.json
 _*.js
 .env
 *.env
+.DS_Store
+*.DS_Store*

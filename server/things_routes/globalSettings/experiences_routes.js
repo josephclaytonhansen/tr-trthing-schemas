@@ -22,13 +22,10 @@ const AddNewWeaponType = asyncHandler(async (req, res) => {
         await globalExperiences.save()
         let weaponType = new WeaponType({ name: req.body.weaponType, magic: req.body.magic, icon: req.body.icon })
         await weaponType.save()
-        res.json({ message: 'New weapon type added successfully.' }}
-    catch (err) {
-        res.status(400).json({ message: err?.message || 'An error occurred.' })
-    }
-    }
-    else {
-        res.status(400).json({ message: 'Invalid weapon type.' })
+        res.json({ message: 'New weapon type added successfully.' })
+        } catch (err) {
+            res.json({ message: 'Error adding new weapon type.' })
+        }
     }
 })
 

@@ -1,19 +1,19 @@
 import mongoose from 'mongoose'
 import { Schema } from 'mongoose'
-import Avatar from './avatar'
-import Enemy from './enemy'
-import Friend from './friend'
-import Npc from './npc'
+import Avatar from './avatar.js'
+import Enemy from './enemy.js'
+import Friend from './friend.js'
+import Npc from './npc.js'
+import UnitClass from '../person_adjacents/classes/unitclass.js'
 
 import _StatSet from '../numbers/stats/statset.js'
 import _StatGrowths from '../numbers/stats/growths.js'
-import _Experiences from '../numbers/experiences/experiences'
-import _ExperiencesGrowth from '../numbers/experiences/experiencesgrowth'
-import _ExperiencesAptitude from '../numbers/experiences/experiencesaptitude'
-import _UnitClass from '../person_adjacents/classes/unitclass'
+import _Experiences from '../numbers/experiences/experiences.js'
+import _ExperiencesGrowth from '../numbers/experiences/growths.js'
+import _ExperiencesAptitude from '../numbers/experiences/aptitudes.js'
 import _Battalion from '../person_adjacents/battalions/battalion.js'
-import _Personality from '../algorithms/units/personality'
-import _BaseBehavior from '../algorithms/units/basebehavior'
+import _Personality from '../algorithms/units/personality.js'
+import _BaseBehavior from '../algorithms/units/basebehavior.js'
 
 const personSchema = new Schema({
     id: String,
@@ -57,7 +57,10 @@ personSchema.methods.addSubs = async function(req) {
         let experiences = new _Experiences(req)
         let experienceGrowths = new _ExperiencesGrowth(req)
         let experienceAptitudes = new _ExperiencesAptitude(req)
-        let unitClass = new _UnitClass(req)
+        let existingClasses = await UnitClass.find().limit(1)
+        let unitClass = existingClasses[0]
+        let classExps = {"": 0}
+
         let battalion = new _Battalion(req)
 
         const avatar = new Avatar({ 
@@ -66,10 +69,11 @@ personSchema.methods.addSubs = async function(req) {
             currentStats: currentStats.toObject(),
             statGrowths: statGrowths.toObject(),
             skills: skills.toObject(),
+            classExps: classExps,
             experiences: experiences.toObject(),
             experienceGrowths: experienceGrowths.toObject(),
             experienceAptitudes: experienceAptitudes.toObject(),
-            unitClass: unitClass.toObject(),
+            unitClass: unitClass,
             battalion: battalion.toObject(),
             level: 1,
             exp: 0,
@@ -92,7 +96,9 @@ personSchema.methods.addSubs = async function(req) {
         let experiences = new _Experiences(req)
         let experienceGrowths = new _ExperiencesGrowth(req)
         let experienceAptitudes = new _ExperiencesAptitude(req)
-        let unitClass = new _UnitClass(req)
+        let existingClasses = await UnitClass.find().limit(1)
+        let unitClass = existingClasses[0]
+        let classExps = {"": 0}
         let battalion = new _Battalion(req)
         let ai = new _Personality(req)
         let baseBehavior = new _BaseBehavior(req)
@@ -106,7 +112,8 @@ personSchema.methods.addSubs = async function(req) {
             experiences: experiences.toObject(),
             experienceGrowths: experienceGrowths.toObject(),
             experienceAptitudes: experienceAptitudes.toObject(),
-            unitClass: unitClass.toObject(),
+            unitClass: unitClass,
+            classExps: classExps,
             battalion: battalion.toObject(),
             level: 1,
             exp: 0,
@@ -126,7 +133,9 @@ personSchema.methods.addSubs = async function(req) {
         let experiences = new _Experiences(req)
         let experienceGrowths = new _ExperiencesGrowth(req)
         let experienceAptitudes = new _ExperiencesAptitude(req)
-        let unitClass = new _UnitClass(req)
+        let existingClasses = await UnitClass.find().limit(1)
+        let unitClass = existingClasses[0]
+        let classExps = {"": 0}
         let battalion = new _Battalion(req)
         let ai = new _Personality(req)
         let baseBehavior = new _BaseBehavior(req)
@@ -140,7 +149,8 @@ personSchema.methods.addSubs = async function(req) {
             experiences: experiences.toObject(),
             experienceGrowths: experienceGrowths.toObject(),
             experienceAptitudes: experienceAptitudes.toObject(),
-            unitClass: unitClass.toObject(),
+            unitClass: unitClass,
+            classExps: classExps,
             battalion: battalion.toObject(),
             level: 1,
             exp: 0,

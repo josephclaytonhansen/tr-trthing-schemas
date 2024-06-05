@@ -8,6 +8,7 @@ import combatExtrasRoutes from './server/things_routes/globalSettings/combatextr
 import globalExperiencesRoutes from './server/things_routes/globalSettings/experiences_routes.js'
 import extraStatsRoutes from './server/things_routes/globalSettings/extrastats_routes.js'
 import SkillRoutes from './server/things_routes/person_adjacents/skills/skill_routes.js'
+import UnitClassRoutes from './server/things_routes/person_adjacents/classes/unitclasses_routes.js'
 
 const app = express()
 const port = 9194
@@ -41,6 +42,7 @@ app.use('/combatextras', combatExtrasRoutes)
 app.use('/globalexperiences', globalExperiencesRoutes)
 app.use('/extrastats', extraStatsRoutes)
 app.use('/skills', SkillRoutes)
+app.use('/unitclasses', UnitClassRoutes)
 
 app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`)

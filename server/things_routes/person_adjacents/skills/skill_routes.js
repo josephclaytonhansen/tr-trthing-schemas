@@ -1,5 +1,5 @@
-import asyncHandler from '../../middleware/asyncHandler.js'
-import Skill from '../../../things/person_adjacents/skills/skill.js'
+import asyncHandler from '../../../middleware/asyncHandler.js'
+import Skill from '../../../../things/person_adjacents/skills/skill.js'
 
 import express from 'express'
 const router = express.Router()
