@@ -81,3 +81,5 @@ class EventHook{
     }
     
 }
+
+export default EventHook

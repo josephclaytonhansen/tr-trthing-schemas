@@ -1,11 +1,11 @@
-import WeaponType from "../abstracts/weapontype"
+import _WeaponType from "../abstracts/weapontype.js"
 
-class GlobalWeaponTypes {
-    public types: WeaponType[] = []
+class _GlobalWeaponTypes {
+    public types: _WeaponType[] = []
     constructor(typesObj?: []) {
         if (typesObj) {
             typesObj.forEach((type: any) => {
-                this.types.push(new WeaponType(type.name, type.icon))
+                this.types.push(new _WeaponType(type.name, type.icon))
             })
         }
     }
@@ -19,8 +19,5 @@ class GlobalWeaponTypes {
     }
 }
 
-let implementation = new GlobalWeaponTypes()
-// db
-
-export default implementation as GlobalWeaponTypes
+export default _GlobalWeaponTypes
 

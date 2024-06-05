@@ -1,4 +1,9 @@
-class Details {
+import Portrait from "../graphics/person/portrait"
+import Sprite from "../graphics/sprite"
+import UnitClass from "../person_adjacents/classes/unitclass"
+import SkillSet from "../person_adjacents/skills/skillset"
+
+class _Details {
     constructor(
         public id: string,
         public name: string = 'New Unit',
@@ -24,12 +29,19 @@ class Details {
         public hobbies = [],
         public team: string = '',
         public title: string = '',
-        public specialUnitClasses = [],
-        public specialSkills = [],
-        public portraits = {},
+        public specialUnitClasses: UnitClass[] = [],
+        public specialSkills: SkillSet[] = [],
+        public portraits?: {},
         public sprites = {},
         public specialColors = {},
-    ){}
+    ){
+        if (!this.portraits) {
+            this.portraits = {'default':new Portrait(this.id)}
+        }
+        if (!this.sprites) {
+            this.sprites = {'default':new Sprite()}
+        }
+    }
 
     json() {
         return {
@@ -58,4 +70,4 @@ class Details {
     }
 }
 
-export default Details
+export default _Details

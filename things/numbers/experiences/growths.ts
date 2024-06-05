@@ -5,6 +5,7 @@ class ExperiencesGrowths {
     public riding: number = 0
     public flying: number = 0
     public armor: number = 0
+    public authority: number = 0
     constructor() {
         const experiences = GlobalExperiences.json()
         for (let type in experiences) {

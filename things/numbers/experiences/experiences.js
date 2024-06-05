@@ -1,10 +1,11 @@
-import GlobalExperiences from '../../globalSettings/experiences'
+import _GlobalExperiences from '../../globalSettings/experiences.js'
 
 class Experiences {
     [key: string]: any
-    public riding: number = 0
-    public flying: number = 0
-    public armor: number = 0
+    public riding: { [key: string]: any } = { amount: 0, level: "E" }
+    public flying: { [key: string]: any } = { amount: 0, level: "E" }
+    public armor: { [key: string]: any } = { amount: 0, level: "E" }
+    public authority: { [key: string]: any } = { amount: 0, level: "E" }
     constructor() {
         const experiences = GlobalExperiences.json()
         for (let type in experiences) {
@@ -12,6 +13,10 @@ class Experiences {
                 this[type] = 0
             }
         }
+    }
+
+    toObject(){
+        return this.json()
     }
 
     json() {
