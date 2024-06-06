@@ -1,5 +1,5 @@
 import asyncHandler from '../../middleware/asyncHandler.js'
-import CombatExtras from '../../../things/globalSettings/combatextras.js'
+import CombatExtras from '../../../things/globalSettings/combat/combatextras.js'
 
 import express from 'express'
 const router = express.Router()

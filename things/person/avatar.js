@@ -2,7 +2,7 @@ import mongoose from 'mongoose'
 import { Schema } from 'mongoose'
 
 const AvatarSchema = new Schema({
-    id: String,
+    owner: String,
     baseStats: {
         type: Object,
     },

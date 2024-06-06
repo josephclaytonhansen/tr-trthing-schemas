@@ -2,7 +2,7 @@ import mongoose from 'mongoose'
 import { Schema } from 'mongoose'
 
 const NpcSchema = new Schema({
-    id: String,
+    owner: String,
 })
 
 const Npc = mongoose.model('Npc', NpcSchema)

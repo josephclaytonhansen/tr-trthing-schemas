@@ -5,6 +5,7 @@ import Enemy from './enemy.js'
 import Friend from './friend.js'
 import Npc from './npc.js'
 import UnitClass from '../person_adjacents/classes/unitclass.js'
+import Details from './details.js'
 
 import _StatSet from '../numbers/stats/statset.js'
 import _StatGrowths from '../numbers/stats/growths.js'
@@ -57,18 +58,27 @@ personSchema.methods.addSubs = async function(req) {
         let experiences = new _Experiences(req)
         let experienceGrowths = new _ExperiencesGrowth(req)
         let experienceAptitudes = new _ExperiencesAptitude(req)
-        let existingClasses = await UnitClass.find().limit(1)
+        let existingClasses = await UnitClass.find()
+        if (existingClasses.length === 0 || !existingClasses) {
+            let unitClass = new UnitClass({
+                name: "New Class",
+                id: "newclass",
+
+            })
+            await unitClass.save()
+            existingClasses = [unitClass]
+        }
         let unitClass = existingClasses[0]
-        let classExps = {"": 0}
+        let classExps = {[existingClasses[0]["id"]]: 0}
 
         let battalion = new _Battalion(req)
 
         const avatar = new Avatar({ 
-            id: this.id, 
+            owner: this.id, 
             baseStats: baseStats.toObject(), 
             currentStats: currentStats.toObject(),
             statGrowths: statGrowths.toObject(),
-            skills: skills.toObject(),
+            skills: skills,
             classExps: classExps,
             experiences: experiences.toObject(),
             experienceGrowths: experienceGrowths.toObject(),
@@ -83,7 +93,7 @@ personSchema.methods.addSubs = async function(req) {
         this._isAvatar = true
 
     } else if (this.which === 'npc') {
-        const npc = new Npc({ id: this.id} )
+        const npc = new Npc({ owner: this.id} )
         await npc.save()
         this._npc = npc._id
         this._isNpc = true
@@ -96,19 +106,28 @@ personSchema.methods.addSubs = async function(req) {
         let experiences = new _Experiences(req)
         let experienceGrowths = new _ExperiencesGrowth(req)
         let experienceAptitudes = new _ExperiencesAptitude(req)
-        let existingClasses = await UnitClass.find().limit(1)
+        let existingClasses = await UnitClass.find()
+        if (existingClasses.length === 0 || !existingClasses) {
+            let unitClass = new UnitClass({
+                name: "New Class",
+                id: "newclass",
+
+            })
+            await unitClass.save()
+            existingClasses = [unitClass]
+        }
         let unitClass = existingClasses[0]
-        let classExps = {"": 0}
+        let classExps = {[existingClasses[0]["id"]]: 0}
         let battalion = new _Battalion(req)
         let ai = new _Personality(req)
         let baseBehavior = new _BaseBehavior(req)
 
         const enemy = new Enemy({ 
-            id: this.id, 
+            owner: this.id, 
             baseStats: baseStats.toObject(), 
             currentStats: currentStats.toObject(),
             statGrowths: statGrowths.toObject(),
-            skills: skills.toObject(),
+            skills: skills,
             experiences: experiences.toObject(),
             experienceGrowths: experienceGrowths.toObject(),
             experienceAptitudes: experienceAptitudes.toObject(),
@@ -133,15 +152,24 @@ personSchema.methods.addSubs = async function(req) {
         let experiences = new _Experiences(req)
         let experienceGrowths = new _ExperiencesGrowth(req)
         let experienceAptitudes = new _ExperiencesAptitude(req)
-        let existingClasses = await UnitClass.find().limit(1)
+        let existingClasses = await UnitClass.find()
+        if (existingClasses.length === 0 || !existingClasses) {
+            let unitClass = new UnitClass({
+                name: "New Class",
+                id: "newclass",
+
+            })
+            await unitClass.save()
+            existingClasses = [unitClass]
+        }
         let unitClass = existingClasses[0]
-        let classExps = {"": 0}
+        let classExps = {[existingClasses[0]["id"]]: 0}
         let battalion = new _Battalion(req)
         let ai = new _Personality(req)
         let baseBehavior = new _BaseBehavior(req)
 
         const friend = new Friend({ 
-            id: this.id, 
+            owner: this.id, 
             baseStats: baseStats.toObject(), 
             currentStats: currentStats.toObject(),
             statGrowths: statGrowths.toObject(),
@@ -163,9 +191,10 @@ personSchema.methods.addSubs = async function(req) {
         this._isFriend = true
     }
 
-    const details = new DetailsModel({ id: this.id} )
+    const details = new Details({ owner: this.id} )
     await details.save()
     this._details = details._id
+    await this.save()
 }
 
 personSchema.pre('findOneAndUpdate', async function() {
@@ -184,24 +213,13 @@ personSchema.methods.rollback = async function() {
 
 personSchema.methods.toJSON = function(combatExtras) {
     let returns = {
-        id: this.get('id'),
-        details: this.get('_details')?.toJSON(),
+        id: this.id,
+        which: this.which,
+        details: this._details,
         isAvatar: this.get('_isAvatar'),
         isNpc: this.get('_isNpc'),
         isEnemy: this.get('_isEnemy'),
         isFriend: this.get('_isFriend'),
-    }
-    if (this.get('_isNpc')) {
-        returns.npc = this.get('_npc')?.toJSON()
-    }
-    if (this.get('_isEnemy')) {
-        returns.enemy = this.get('_enemy')?.toJSON()
-    }
-    if (this.get('_isFriend')) {
-        returns.friend = this.get('_friend')?.toJSON()
-    }
-    if (this.get('_isAvatar')) {
-        returns.avatar = this.get('_avatar')?.toJSON()
     }
     if (!this.get('_isNpc') && this.get('_isEnemy') || this.get('_isFriend') || this.get('_isAvatar')) {
         if (!this.get('_isEnemy')){

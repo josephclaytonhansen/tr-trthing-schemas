@@ -2,6 +2,7 @@ import _Icon from '../../graphics/icon.js'
 import _StatSet from '../../numbers/stats/statset.js'
 
 class _Battalion {
+    req = null
     name = 'New Battalion'
     authorityLevel = 'E'
     battalionLevel = 'E'
@@ -11,12 +12,15 @@ class _Battalion {
     icon = new _Icon()
     minRange = 1
     maxRange = 1
-    bonusStats = new _StatSet()
+    bonusStats = {}
     squares= [3]
     effects = []
     hit= 0
 
-    constructor(){}
+    constructor(req){
+        this.req = req
+        this.bonusStats = new _StatSet(req)
+    }
 
     toObject(){
         return this.json()

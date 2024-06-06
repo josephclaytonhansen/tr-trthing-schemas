@@ -2,7 +2,7 @@ import mongoose from 'mongoose'
 import { Schema } from 'mongoose'
 
 const EnemySchema = new Schema({
-    id: String,
+    owner: String,
     baseStats: {
         type: Object,
     },

@@ -37,7 +37,7 @@ class _StatSet {
         this.req = null
     }
 
-    json(req) {
+    json() {
         let returns = {
             hp: this.hp,
             str: this.str,
@@ -53,13 +53,13 @@ class _StatSet {
             avo: 0,
 
         }
-        if (req.ExtraStats.luck) {
+        if (this.req.ExtraStats.luck) {
             returns.lck = this.lck 
         }
-        if (req.ExtraStats.weight && req.ExtraStats.weightAffectsMov) {
+        if (this.req.ExtraStats.weight && this.req.ExtraStats.weightAffectsMov) {
             returns.endurance = this.endurance
         }
-        if (req.ExtraStats.authority) {
+        if (this.req.ExtraStats.authority) {
             returns.authority = this.authority
         }
         return returns
