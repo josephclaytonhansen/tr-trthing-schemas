@@ -80,9 +80,9 @@ personSchema.methods.addSubs = async function(req) {
             statGrowths: statGrowths.toObject(),
             skills: skills,
             classExps: classExps,
-            experiences: experiences.toObject(),
-            experienceGrowths: experienceGrowths.toObject(),
-            experienceAptitudes: experienceAptitudes.toObject(),
+            experiences: experiences.json(),
+            experienceGrowths: experienceGrowths.json(),
+            experienceAptitudes: experienceAptitudes.json(),
             unitClass: unitClass,
             battalion: battalion.toObject(),
             level: 1,
@@ -253,6 +253,4 @@ personSchema.methods.toJSON = function(combatExtras) {
     return returns
 }
 
-const Person = mongoose.model('Person', personSchema)
-
-export default Person
+export default personSchema

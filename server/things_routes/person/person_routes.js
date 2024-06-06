@@ -1,17 +1,19 @@
 import asyncHandler from '../../middleware/asyncHandler.js'
-import Person from '../../../things/person/person.js'
+import PersonSchema from '../../../things/person/person.js'
 import {uid} from '../../functions/data_management/hexuids.js' 
 
 import express from 'express'
 const router = express.Router()
 
 const getPeople = asyncHandler(async (req, res) => {
+    const Person = req.connection.model('Person', PersonSchema)
     const people = await Person.find({}).populate(['_details', '_avatar', '_npc', '_enemy', '_friend'])
     const peopleJson = people.map(person => person.toJSON(req.combatExtras))
     res.json(peopleJson)
 })
 
 const createPerson = asyncHandler(async (req, res) => {
+    const Person = req.connection.model('Person', PersonSchema)
     if (req.body.which === 'avatar'){
         let numberOfExistingAvatars = await Person.countDocuments( { _avatar: { $exists: true } } )
         if (numberOfExistingAvatars !== 0) {
@@ -27,11 +29,13 @@ const createPerson = asyncHandler(async (req, res) => {
 })
 
 const getPersonByMongoId = asyncHandler(async (req, res) => {
+    const Person = req.connection.model('Person', PersonSchema)
     const person = await Person.findById(req.params.id).populate(['_details', '_avatar', '_npc', '_enemy', '_friend'])
     res.json(person.toJSON(req.combatExtras))
 })
 
 const getPerson = asyncHandler(async (req, res) => {
+    const Person = req.connection.model('Person', PersonSchema)
     const person = await Person.findOne({id: req.params.id}).populate(['_details', '_avatar', '_npc', '_enemy', '_friend'])
     if (!person) {
         res.status(404)
@@ -41,6 +45,7 @@ const getPerson = asyncHandler(async (req, res) => {
 })
 
 const updatePerson = asyncHandler(async (req, res) => {
+    const Person = req.connection.model('Person', PersonSchema)
     try{const person = await Person.findOneAndUpdate({id: req.params.id}, req.body).populate()
     res.json({success: true, message: 'Person updated'})} catch (err) {
         res.json({success: false, message: 'Error updating person'})
@@ -49,6 +54,7 @@ const updatePerson = asyncHandler(async (req, res) => {
 })
 
 const deletePerson = asyncHandler(async (req, res) => {
+    const Person = req.connection.model('Person', PersonSchema)
     try{const person = await Person.findOneAndDelete({id: req.params.id})
     res.json({success: true, message: 'Person deleted'})} catch (err) {
         res.json({success: false, message: 'Error deleting person'})
@@ -57,6 +63,7 @@ const deletePerson = asyncHandler(async (req, res) => {
 })
 
 const deletePersonByMongoId = asyncHandler(async (req, res) => {
+    const Person = req.connection.model('Person', PersonSchema)
     try{const person = await Person.findByIdAndDelete(req.params.id)
     res.json({success: true, message: 'Person deleted'})} catch (err) {
         res.json({success: false, message: 'Error deleting person'})
@@ -64,6 +71,7 @@ const deletePersonByMongoId = asyncHandler(async (req, res) => {
 })
 
 const rollback = asyncHandler(async (req, res) => {
+    const Person = req.connection.model('Person', PersonSchema)
     try{const person = await Person.findOne({id: req.params.id})
     if (person) {
         await person.rollback()

@@ -10,6 +10,9 @@ const checkHighest = async () => {
 
 const uid = async (value) => {
     let newUidHex = await Uid.create({value: value.toString(16).padStart(5, '0')})
+    await Uid.deleteMany({
+        _id: {$ne: newUidHex._id},
+    })
     return newUidHex.value
 }
 

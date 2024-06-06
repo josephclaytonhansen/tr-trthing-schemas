@@ -1,4 +1,4 @@
-class Experiences {
+class _Experiences {
     riding = { amount: 0, level: "E" }
     flying = { amount: 0, level: "E" }
     armor = { amount: 0, level: "E" }
@@ -19,13 +19,15 @@ class Experiences {
 
     json() {
         let returns = {}
-        for (let type in this) {
-            if (typeof this[type] === 'object') {
-                returns[type] = this[type]
+        Object.keys(this).forEach(key => {
+            /* ------------------- This is a load-bearing conditional ------------------- */
+            /* -------------------- For some incredibly stupid reason ------------------- */
+            if (key !== '$isMongooseModelPrototype' && key !== '$isMongooseDocumentPrototype') {
+                returns[key] = this[key]
             }
-        }
+        })
         return returns
     }
 }
 
-export default Experiences
+export default _Experiences
