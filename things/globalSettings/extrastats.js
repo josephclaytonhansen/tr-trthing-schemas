@@ -19,5 +19,4 @@ ExtraStatsSchema.pre('save', function() {
     }
 })
 
-const ExtraStats = mongoose.model('ExtraStats', ExtraStatsSchema)
-export default ExtraStats
+export default ExtraStatsSchema

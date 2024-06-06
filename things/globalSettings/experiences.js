@@ -21,6 +21,4 @@ GlobalExperiencesSchema.methods.addNewWeaponType = function(type) {
     this[type] = true
 }
 
-const GlobalExperiences = mongoose.model('GlobalExperiences', GlobalExperiencesSchema)
-
-export default GlobalExperiences
+export default GlobalExperiencesSchema

@@ -1,6 +1,6 @@
 import asyncHandler from '../../middleware/asyncHandler.js'
 import Person from '../../../things/person/person.js'
-import {uid} from '../../functions/hexuids.js' 
+import {uid} from '../../functions/data_management/hexuids.js' 
 
 import express from 'express'
 const router = express.Router()

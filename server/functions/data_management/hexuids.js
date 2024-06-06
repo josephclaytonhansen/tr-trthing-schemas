@@ -1,4 +1,4 @@
-import Uid from '../../things/abstracts/_meta/uid.js'
+import Uid from '../../../things/abstracts/_meta/uid.js'
 
 const checkHighest = async () => {
     let all = await Uid.find({})

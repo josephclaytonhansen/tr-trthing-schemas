@@ -1,14 +1,15 @@
 import mongoose from 'mongoose'
 import dotenv from 'dotenv'
+import generateDbName from './functions/database_management/projectdb.js'
 dotenv.config()
 
 const MONGO_STRING = process.env.MONGO_STRING
 
 let failureCount = 0
 
-const connectWithRetry = async () => {
+const connectWithRetry = async (failureCount) => {
     console.log('MongoDB connection with retry')
-    return mongoose.connect(MONGO_STRING, { useNewUrlParser: true, useUnifiedTopology: true,retryReads:true, retryWrites:true }).catch((err) => {
+    return mongoose.connect(MONGO_STRING, { useNewUrlParser: true, useUnifiedTopology: true,retryReads:true, retryWrites:true, dbName: generateDbName() }).catch((err) => {
         console.log('MongoDB connection unsuccessful, retry after 1 seconds.')
         setTimeout(connectWithRetry, 1000)
         failureCount++
@@ -58,21 +59,5 @@ db.on('disconnected', () => {
 })
 
 db.ObjectId = mongoose.Types.ObjectId
-
-//create a session store
-db.sessionStorage = {
-    sessions: {},
-    get: function (sid, cb) {
-        cb(null, this.sessions[sid])
-    },
-    set: function (sid, session, cb) {
-        this.sessions[sid] = session
-        cb(null, session)
-    },
-    destroy: function (sid, cb) {
-        delete this.sessions[sid]
-        cb(null)
-    }
-}
 
 export default db

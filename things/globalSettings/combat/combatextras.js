@@ -55,7 +55,4 @@ CombatExtrasSchema.pre('save', function() {
         }
 })
 
-const CombatExtras = mongoose.model('CombatExtras', CombatExtrasSchema)
-
-
-export default CombatExtras
+export default CombatExtrasSchema

@@ -9,13 +9,13 @@ const bake = (encryptionKey) => {
     const cipher = crypto.createCipheriv('aes-256-cbc', Buffer.from(key), Buffer.alloc(16, 0))
     let encrypted = Buffer.concat([cipher.update(base64, 'utf8'), cipher.final()])
     let compressed = zlib.gzipSync(encrypted)
-    return compressed.toString('base64')
+    return compressed
 }
 
 const unbake = (encryptedData, decryptionKey) => {
     let key = crypto.createHash('sha256').update(String(decryptionKey)).digest('base64').substr(0, 32)
     
-    let decompressed = zlib.gunzipSync(Buffer.from(encryptedData, 'base64'))
+    let decompressed = zlib.gunzipSync(encryptedData)
     
     const decipher = crypto.createDecipheriv('aes-256-cbc', Buffer.from(key), Buffer.alloc(16, 0))
     let decrypted = Buffer.concat([decipher.update(decompressed), decipher.final()])

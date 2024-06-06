@@ -62,6 +62,4 @@ GlobalWeaponTypesSchema.pre('save', function() {
     }
 })
 
-const GlobalWeaponTypes = mongoose.model('GlobalWeaponTypes', GlobalWeaponTypesSchema)
-
-export default GlobalWeaponTypes
+export default GlobalWeaponTypesSchema
