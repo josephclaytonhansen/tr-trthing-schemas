@@ -1,20 +1,20 @@
-import Icon from '../../graphics/icon'
+import _Icon from '../../graphics/icon.js'
 import _StatSet from '../../numbers/stats/statset.js'
 
 class _Battalion {
-    public name?: string = 'New Battalion'
-    public authorityLevel?: string = 'E'
-    public battalionLevel?: string = 'E'
-    public battalionExperience?: number = 0
-    public uses?: number = 2
-    public description?: string = 'A new battalion'
-    public icon?: Icon = new Icon()
-    public minRange?: number = 1
-    public maxRange?: number = 1
-    public bonusStats?: StatSet = new StatSet()
-    public squares?: [number] = [1]
-    public effects?: [string] = ['']
-    public hit?: number = 0
+    name = 'New Battalion'
+    authorityLevel = 'E'
+    battalionLevel = 'E'
+    battalionExperience = 0
+    uses = 2
+    description = 'A new battalion'
+    icon = new _Icon()
+    minRange = 1
+    maxRange = 1
+    bonusStats = new _StatSet()
+    squares= [3]
+    effects = []
+    hit= 0
 
     constructor(){}
 
@@ -23,7 +23,7 @@ class _Battalion {
     }
 
     json(){
-        let returns: any = {
+        let returns = {
             name: this.name,
             authorityLevel: this.authorityLevel,
             battalionLevel: this.battalionLevel,

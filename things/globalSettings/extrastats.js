@@ -9,5 +9,15 @@ const ExtraStatsSchema = new Schema({
     authority: Boolean
 })
 
+ExtraStatsSchema.pre('save', function() {
+    if (this.isNew) {
+        this.weight = false
+        this.weightAffectsMov = false
+        this.luck = true
+        this.separateCritAvo = false
+        this.authority = true
+    }
+})
+
 const ExtraStats = mongoose.model('ExtraStats', ExtraStatsSchema)
 export default ExtraStats

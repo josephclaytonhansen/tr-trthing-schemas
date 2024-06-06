@@ -10,9 +10,11 @@ const getExtraStats = asyncHandler(async (req, res) => {
 })
 
 const updateExtraStats = asyncHandler(async (req, res) => {
-    const extrastats = await ExtraStats.findOneAndUpdate({}, req.body).populate()
+    await ExtraStats.findOneAndUpdate({}, req.body).populate()
     res.status(201).json({success: true, message: 'ExtraStats updated'})
 })
 
 router.route('/').get(getExtraStats)
 router.route('/').put(updateExtraStats)
+
+export default router

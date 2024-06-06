@@ -44,6 +44,29 @@ app.use('/extrastats', extraStatsRoutes)
 app.use('/skills', SkillRoutes)
 app.use('/unitclasses', UnitClassRoutes)
 
+const init = async() => {
+    try {
+        let combatExtras = await CombatExtras.findOne({});
+        if (!combatExtras) {
+            await CombatExtras.create({});
+        }
+
+        let globalExperiences = await GlobalExperiences.findOne({});
+        if (!globalExperiences) {
+            await GlobalExperiences.create({});
+        }
+
+        let extraStats = await ExtraStats.findOne({});
+        if (!extraStats) {
+            await ExtraStats.create({});
+        }
+    } catch (err) {
+        console.error(err)
+    }
+}
+
+init()
+
 app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`)
 })

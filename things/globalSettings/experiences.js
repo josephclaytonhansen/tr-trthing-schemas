@@ -8,6 +8,15 @@ const GlobalExperiencesSchema = new Schema({
     authority: Boolean,
 })
 
+GlobalExperiencesSchema.pre('save', function() {
+    if (this.isNew) {
+        this.riding = true
+        this.flying = true
+        this.armor = true
+        this.authority = true
+    }
+})
+
 GlobalExperiencesSchema.methods.addNewWeaponType = function(type) {
     this[type] = true
 }

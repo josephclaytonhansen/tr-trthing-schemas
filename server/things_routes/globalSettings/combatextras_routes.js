@@ -14,3 +14,5 @@ const updateCombatExtras = asyncHandler(async (req, res) => {
     res.status(201).json({success: true, message: 'CombatExtras updated'})
 })
 
+router.route('/').get(getCombatExtras).put(updateCombatExtras)
+export default router
