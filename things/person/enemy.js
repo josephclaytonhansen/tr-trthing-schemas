@@ -3,6 +3,7 @@ import { Schema } from 'mongoose'
 
 const EnemySchema = new Schema({
     owner: String,
+    id: String,
     baseStats: {
         type: Object,
     },

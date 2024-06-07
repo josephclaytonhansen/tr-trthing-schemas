@@ -52,6 +52,7 @@ const attachHighest = async (req, res, next) => {
     }
     if (connections[req.userId]) {
         req.connection = connections[req.userId].connection
+        req.dbName = connections[req.userId].dbName
         mongoose.connection.useDb(req.connection.dbName)
     }
     next()

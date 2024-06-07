@@ -1,5 +1,9 @@
 import mongoose from 'mongoose'
 import { Schema } from 'mongoose'
+
+import {uid} from '../../server/functions/data_management/hexuids.js'
+import {signBlock} from '../../server/functions/data_management/blockkey.js'
+
 import Avatar from './avatar.js'
 import Enemy from './enemy.js'
 import Friend from './friend.js'
@@ -49,6 +53,10 @@ const personSchema = new Schema({
     _goals: Array,
 })
 
+personSchema.methods.sign = function(connectionKey, launchKey) {
+    return signBlock(this, connectionKey, launchKey)
+}
+
 personSchema.methods.addSubs = async function(req) {
     if (this.which === 'avatar') {
         let baseStats = new _StatSet(req)
@@ -60,21 +68,24 @@ personSchema.methods.addSubs = async function(req) {
         let experienceAptitudes = new _ExperiencesAptitude(req)
         let existingClasses = await UnitClass.find()
         if (existingClasses.length === 0 || !existingClasses) {
+            req.highest++
             let unitClass = new UnitClass({
                 name: "New Class",
-                id: "newclass",
-
+                id: await uid(req.highest++),
             })
             await unitClass.save()
             existingClasses = [unitClass]
         }
         let unitClass = existingClasses[0]
-        let classExps = {[existingClasses[0]["id"]]: 0}
+        let unitClassId = unitClass.id
+        let classExps = {}
+        classExps[unitClassId] = 0
 
         let battalion = new _Battalion(req)
 
         const avatar = new Avatar({ 
             owner: this.id, 
+            id: await uid(req.highest++),
             baseStats: baseStats.toObject(), 
             currentStats: currentStats.toObject(),
             statGrowths: statGrowths.toObject(),
@@ -93,7 +104,7 @@ personSchema.methods.addSubs = async function(req) {
         this._isAvatar = true
 
     } else if (this.which === 'npc') {
-        const npc = new Npc({ owner: this.id} )
+        const npc = new Npc({ owner: this.id, id: await uid(req.highest++)} )
         await npc.save()
         this._npc = npc._id
         this._isNpc = true
@@ -124,6 +135,7 @@ personSchema.methods.addSubs = async function(req) {
 
         const enemy = new Enemy({ 
             owner: this.id, 
+            id: await uid(req.highest++),
             baseStats: baseStats.toObject(), 
             currentStats: currentStats.toObject(),
             statGrowths: statGrowths.toObject(),
@@ -170,6 +182,7 @@ personSchema.methods.addSubs = async function(req) {
 
         const friend = new Friend({ 
             owner: this.id, 
+            id: await uid(req.highest++),
             baseStats: baseStats.toObject(), 
             currentStats: currentStats.toObject(),
             statGrowths: statGrowths.toObject(),
@@ -191,7 +204,7 @@ personSchema.methods.addSubs = async function(req) {
         this._isFriend = true
     }
 
-    const details = new Details({ owner: this.id} )
+    const details = new Details({ owner: this.id, id: await uid(req.highest++)} )
     await details.save()
     this._details = details._id
     await this.save()

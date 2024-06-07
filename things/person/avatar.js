@@ -3,6 +3,7 @@ import { Schema } from 'mongoose'
 
 const AvatarSchema = new Schema({
     owner: String,
+    id: String,
     baseStats: {
         type: Object,
     },
@@ -42,7 +43,6 @@ const AvatarSchema = new Schema({
     appearanceCustomizations: [[String]],
     appearance: Object,
 })
-
 
 const Avatar = mongoose.model('Avatar', AvatarSchema)
 

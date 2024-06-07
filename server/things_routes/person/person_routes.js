@@ -1,5 +1,11 @@
 import asyncHandler from '../../middleware/asyncHandler.js'
+
 import PersonSchema from '../../../things/person/person.js'
+import Details from '../../../things/person/details.js'
+import Avatar from '../../../things/person/avatar.js'
+import Npc from '../../../things/person/npc.js'
+import Enemy from '../../../things/person/enemy.js'
+
 import {uid} from '../../functions/data_management/hexuids.js' 
 
 import express from 'express'
@@ -21,10 +27,11 @@ const createPerson = asyncHandler(async (req, res) => {
             throw new Error('An avatar unit already exists, you cannot create another one.')
         }
     }
-    let value = req.highest + 1
-    req.body.id = await uid(value)
+    req.highest++
+    req.body.id = await uid(req.highest)
     const person = await Person.create(req.body)
     await person.addSubs(req)
+
     res.json(person.toJSON(req.combatExtras))
 })
 
@@ -81,6 +88,121 @@ const rollback = asyncHandler(async (req, res) => {
     }
 })
 
+const getDetails = asyncHandler(async (req, res) => {
+    if (req.body.owner){
+        let details = await Details.findOne({owner: req.body.owner})
+        if (details) {
+            res.json(details)
+        } else {
+            res.status(404)
+            throw new Error('Details not found')
+        }
+    } else if (req.body._id) {
+        let details = await Details.findById(req.body._id)
+        if (details) {
+            res.json(details)
+        } else {
+            res.status(404)
+            throw new Error('Details not found')
+        }
+    } else {
+        res.status(400)
+        throw new Error('No owner or _id provided')
+    }
+})
+
+const getAvatar = asyncHandler(async (req, res) => {
+    if (req.body.owner){
+        let details = await Avatar.findOne({owner: req.body.owner})
+        if (details) {
+            res.json(details)
+        } else {
+            res.status(404)
+            throw new Error('Avatar not found')
+        }
+    } else if (req.body._id) {
+        let details = await Avatar.findById(req.body._id)
+        if (details) {
+            res.json(details)
+        } else {
+            res.status(404)
+            throw new Error('Avatar not found')
+        }
+    } else {
+        res.status(400)
+        throw new Error('No owner or _id provided')
+    }
+})
+
+const getFriend = asyncHandler(async (req, res) => {
+    if (req.body.owner){
+        let details = await Friend.findOne({owner: req.body.owner})
+        if (details) {
+            res.json(details)
+        } else {
+            res.status(404)
+            throw new Error('Friend not found')
+        }
+    } else if (req.body._id) {
+        let details = await Friend.findById(req.body._id)
+        if (details) {
+            res.json(details)
+        } else {
+            res.status(404)
+            throw new Error('Friend not found')
+        }
+    } else {
+        res.status(400)
+        throw new Error('No owner or _id provided')
+    }
+})
+
+const getEnemy = asyncHandler(async (req, res) => {
+    if (req.body.owner){
+        let details = await Enemy.findOne({owner: req.body.owner})
+        if (details) {
+            res.json(details)
+        } else {
+            res.status(404)
+            throw new Error('Enemy not found')
+        }
+    } else if (req.body._id) {
+        let details = await Enemy.findById(req.body._id)
+        if (details) {
+            res.json(details)
+        } else {
+            res.status(404)
+            throw new Error('Enemy not found')
+        }
+    } else {
+        res.status(400)
+        throw new Error('No owner or _id provided')
+    }
+})
+
+const getNpc = asyncHandler(async (req, res) => {
+    if (req.body.owner){
+        let details = await Npc.findOne({owner: req.body.owner})
+        if (details) {
+            res.json(details)
+        } else {
+            res.status(404)
+            throw new Error('NPC not found')
+        }
+    } else if (req.body._id) {
+        let details = await Npc.findById(req.body._id)
+        if (details) {
+            res.json(details)
+        } else {
+            res.status(404)
+            throw new Error('NPC not found')
+        }
+    } else {
+        res.status(400)
+        throw new Error('No owner or _id provided')
+    }
+})
+
 router.route('/').get(getPeople)
 router.route('/').post(createPerson)
 router.route('/:id').get(getPerson)
@@ -89,5 +211,10 @@ router.route('/:id').put(updatePerson)
 router.route('/:id').delete(deletePerson)
 router.route('/_id/:id').delete(deletePersonByMongoId)
 router.route('/undo/:id/').post(rollback)
+router.route('/details').post(getDetails)
+router.route('/avatar').post(getAvatar)
+router.route('/friend').post(getFriend)
+router.route('/enemy').post(getEnemy)
+router.route('/npc').post(getNpc)
 
 export default router

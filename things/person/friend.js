@@ -1,8 +1,8 @@
 import mongoose from 'mongoose'
 import { Schema } from 'mongoose'
-
 const FriendSchema = new Schema({
     owner: String,
+    id: String,
     baseStats: {
         type: Object,
     },

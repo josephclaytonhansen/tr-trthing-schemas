@@ -3,6 +3,7 @@ import { Schema } from 'mongoose'
 
 const DetailsSchema = new Schema({
     owner: String,
+    id: String,
     name: String,
     alive: Boolean,
     age: Number,
@@ -52,6 +53,5 @@ DetailsSchema.pre('save', function() {
 })
 
 const Details = mongoose.model('Details', DetailsSchema)
-
 
 export default Details
