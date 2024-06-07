@@ -13,7 +13,7 @@ const router = express.Router()
 
 const getPeople = asyncHandler(async (req, res) => {
     const Person = req.connection.model('Person', PersonSchema)
-    const people = await Person.find({}).populate(['_details', '_avatar', '_npc', '_enemy', '_friend'])
+    const people = await Person.find({})
     const peopleJson = people.map(person => person.toJSON(req.combatExtras))
     res.json(peopleJson)
 })
@@ -37,13 +37,55 @@ const createPerson = asyncHandler(async (req, res) => {
 
 const getPersonByMongoId = asyncHandler(async (req, res) => {
     const Person = req.connection.model('Person', PersonSchema)
-    const person = await Person.findById(req.params.id).populate(['_details', '_avatar', '_npc', '_enemy', '_friend'])
+    const person = await Person.findById(req.params.id)
+    .populate({
+        path: '_avatar',
+        populate: [
+            { path: 'battalion' },
+            { path: 'unitClass' }
+        ]
+    })
+    .populate({
+        path: '_enemy',
+        populate: [
+            { path: 'battalion' },
+            { path: 'unitClass' }
+        ]
+    })
+    .populate({
+        path: '_friend',
+        populate: [
+            { path: 'battalion' },
+            { path: 'unitClass' }
+        ]
+    })
     res.json(person.toJSON(req.combatExtras))
 })
 
 const getPerson = asyncHandler(async (req, res) => {
     const Person = req.connection.model('Person', PersonSchema)
-    const person = await Person.findOne({id: req.params.id}).populate(['_details', '_avatar', '_npc', '_enemy', '_friend'])
+    const person = await Person.findOne({id: req.params.id})
+    .populate({
+        path: '_avatar',
+        populate: [
+            { path: 'battalion' },
+            { path: 'unitClass' }
+        ]
+    })
+    .populate({
+        path: '_enemy',
+        populate: [
+            { path: 'battalion' },
+            { path: 'unitClass' }
+        ]
+    })
+    .populate({
+        path: '_friend',
+        populate: [
+            { path: 'battalion' },
+            { path: 'unitClass' }
+        ]
+    })
     if (!person) {
         res.status(404)
         throw new Error('Person not found')

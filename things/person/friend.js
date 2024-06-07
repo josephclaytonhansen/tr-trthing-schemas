@@ -31,7 +31,8 @@ const FriendSchema = new Schema({
     },
     exp: Number,
     battalion: {
-        type: Object,
+        ref: 'Battalion',
+        type: Schema.Types.ObjectId
     },
     unique: Boolean,
     ai: {

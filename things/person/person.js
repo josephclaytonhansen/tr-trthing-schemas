@@ -2,7 +2,6 @@ import mongoose from 'mongoose'
 import { Schema } from 'mongoose'
 
 import {uid} from '../../server/functions/data_management/hexuids.js'
-import {signBlock} from '../../server/functions/data_management/blockkey.js'
 
 import Avatar from './avatar.js'
 import Enemy from './enemy.js'
@@ -10,13 +9,14 @@ import Friend from './friend.js'
 import Npc from './npc.js'
 import UnitClass from '../person_adjacents/classes/unitclass.js'
 import Details from './details.js'
+import {Battalion} from '../person_adjacents/battalions/battalion.js'
+import {Goal} from '../person_adjacents/goals/goal.js'
 
 import _StatSet from '../numbers/stats/statset.js'
 import _StatGrowths from '../numbers/stats/growths.js'
 import _Experiences from '../numbers/experiences/experiences.js'
 import _ExperiencesGrowth from '../numbers/experiences/growths.js'
 import _ExperiencesAptitude from '../numbers/experiences/aptitudes.js'
-import _Battalion from '../person_adjacents/battalions/battalion.js'
 import _Personality from '../algorithms/units/personality.js'
 import _BaseBehavior from '../algorithms/units/basebehavior.js'
 
@@ -47,15 +47,21 @@ const personSchema = new Schema({
     _isNpc: Boolean,
     _isEnemy: Boolean,
     _isFriend: Boolean,
-    _supports: Object,
-    _supportPoints: Object,
-    _maxSupportPoints: Object,
+    _supports: {
+        type: Object,
+        default: {}
+    },
+    _supportPoints: {
+        type: Object,
+        default: {}
+    },
+    _maxSupportPoints: {
+        type: Object,
+        default: {}
+    },
     _goals: Array,
+    _reactions: Object,
 })
-
-personSchema.methods.sign = function(connectionKey, launchKey) {
-    return signBlock(this, connectionKey, launchKey)
-}
 
 personSchema.methods.addSubs = async function(req) {
     if (this.which === 'avatar') {
@@ -81,7 +87,16 @@ personSchema.methods.addSubs = async function(req) {
         let classExps = {}
         classExps[unitClassId] = 0
 
-        let battalion = new _Battalion(req)
+        req.highest++
+        let bonusStats = new _StatSet(req)
+        let battalion = new Battalion(
+            {
+                id: await uid(req.highest++),
+                name: "New Battalion",
+                bonusStats: bonusStats.toObject(),
+            }
+        )
+        await battalion.save()
 
         const avatar = new Avatar({ 
             owner: this.id, 
@@ -129,7 +144,16 @@ personSchema.methods.addSubs = async function(req) {
         }
         let unitClass = existingClasses[0]
         let classExps = {[existingClasses[0]["id"]]: 0}
-        let battalion = new _Battalion(req)
+        req.highest++
+        let bonusStats = new _StatSet(req)
+        let battalion = new Battalion(
+            {
+                id: await uid(req.highest++),
+                name: "New Battalion",
+                bonusStats: bonusStats.toObject(),
+            }
+        )
+        await battalion.save()
         let ai = new _Personality(req)
         let baseBehavior = new _BaseBehavior(req)
 
@@ -176,7 +200,16 @@ personSchema.methods.addSubs = async function(req) {
         }
         let unitClass = existingClasses[0]
         let classExps = {[existingClasses[0]["id"]]: 0}
-        let battalion = new _Battalion(req)
+        req.highest++
+        let bonusStats = new _StatSet(req)
+        let battalion = new Battalion(
+            {
+                id: await uid(req.highest++),
+                name: "New Battalion",
+                bonusStats: bonusStats.toObject(),
+            }
+        )
+        await battalion.save()
         let ai = new _Personality(req)
         let baseBehavior = new _BaseBehavior(req)
 
@@ -207,15 +240,21 @@ personSchema.methods.addSubs = async function(req) {
     const details = new Details({ owner: this.id, id: await uid(req.highest++)} )
     await details.save()
     this._details = details._id
+
+    const goal = new Goal({ owner: this.id, id: await uid(req.highest++)} )
+    await goal.save()
+    this._goals = [goal._id]
+
     await this.save()
 }
 
 personSchema.pre('findOneAndUpdate', async function() {
-    const unit = await this.model.findOne(this.getQuery())
-    if (unit) {
-        unit._objectData = unit.toJSON()
-        await unit.save()}
-    })
+    const person = await this.model.findOne(this.getQuery())
+    if (person) {
+        person._objectData = person.toJSON()
+        await person.save()
+    }
+});
 
 personSchema.methods.rollback = async function() {
     const unit = await this.model.findOne(this.getQuery())
@@ -233,13 +272,24 @@ personSchema.methods.toJSON = function(combatExtras) {
         isNpc: this.get('_isNpc'),
         isEnemy: this.get('_isEnemy'),
         isFriend: this.get('_isFriend'),
+        props: [
+            '_avatar',
+            '_npc',
+            '_enemy',
+            '_friend',
+            '_details',
+            '_isAvatar',
+            '_isNpc',
+            '_isEnemy',
+            '_isFriend',
+            '_supports',
+            '_supportPoints',
+            '_maxSupportPoints',
+            '_goals',
+        ],
     }
-    if (!this.get('_isNpc') && this.get('_isEnemy') || this.get('_isFriend') || this.get('_isAvatar')) {
+    if (!this.get('_isNpc') || this.get('_isEnemy') || this.get('_isFriend') || this.get('_isAvatar')) {
         if (!this.get('_isEnemy')){
-            returns.supports = this.get('_supports')
-            returns.supportPoints = this.get('_supportPoints')
-            returns.maxSupportPoints = this.get('_maxSupportPoints')
-            returns.goals = this.get('_goals')
         }
         returns.combatData = {
             baseStats: this.get('_enemy')?.baseStats || this.get('_friend')?.baseStats || this.get('_avatar')?.baseStats,
@@ -254,6 +304,7 @@ personSchema.methods.toJSON = function(combatExtras) {
             exp: this.get('_enemy')?.exp || this.get('_friend')?.exp || this.get('_avatar')?.exp,
             unique: this.get('_enemy')?.unique || this.get('_friend')?.unique,
         }
+
         if (combatExtras && combatExtras.battalions){
             returns.combatData.battalion = this.get('_enemy')?.battalion || this.get('_friend')?.battalion || this.get('_avatar')?.battalion
         }

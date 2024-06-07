@@ -35,7 +35,8 @@ const AvatarSchema = new Schema({
     },
     exp: Number,
     battalion: {
-        type: Object,
+        ref: 'Battalion',
+        type: Schema.Types.ObjectId
     },
     defaultName: String,
     voiceOptions: [String],
