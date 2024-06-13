@@ -1,9 +1,6 @@
 import asyncHandler from '../../../middleware/asyncHandler.js'
 import Skill from '../../../../things/person_adjacents/skills/skill.js'
 
-import express from 'express'
-const router = express.Router()
-
 const getSkills = asyncHandler(async (req, res) => {
     const skills = await Skill.find().populate()
     res.json(skills)
@@ -36,4 +33,11 @@ router.route('/').get(getSkills).post(createSkill)
 router.route('/_id/:id').get(getSkillByMongoId)
 router.route('/:id').get(GetSkill).put(updateSkill).delete(deleteSkill)
 
-export default router
+export {
+    getSkills,
+    getSkillByMongoId,
+    GetSkill,
+    createSkill,
+    updateSkill,
+    deleteSkill
+}

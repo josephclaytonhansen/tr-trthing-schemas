@@ -1,9 +1,6 @@
 import asyncHandler from '../../../middleware/asyncHandler.js'
 import UnitClass from '../../../../things/person_adjacents/classes/unitclass.js'
 
-import express from 'express'
-const router = express.Router()
-
 const getUnitClasses = asyncHandler(async (req, res) => {
     const unitClasses = await UnitClass.find().populate()
     resJson = unitClasses.map(unitClass => unitClass.toJSON())
@@ -35,8 +32,11 @@ const deleteUnitClass = asyncHandler(async (req, res) => {
     res.json({success: true, message: "UnitClass deleted"})
 })
 
-router.route('/').get(getUnitClasses).post(createUnitClass)
-router.route('/:id').get(getUnitClass).put(updateUnitClass).delete(deleteUnitClass)
-router.route('/_id/:id').get(getUnitClassByMongoId)
-
-export default router
+export {
+    getUnitClasses,
+    getUnitClassByMongoId,
+    getUnitClass,
+    createUnitClass,
+    updateUnitClass,
+    deleteUnitClass
+}

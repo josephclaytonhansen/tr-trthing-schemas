@@ -22,18 +22,13 @@ if (fs.existsSync(connectionsFilePath)) {
 dotenv.config()
 
 import express from 'express'
-import unit from './server/things_routes/person/person_routes.js'
 import CombatExtrasSchema from './things/globalSettings/combat/combatextras.js'
 import GlobalExperiencesSchema from './things/globalSettings/experiences.js'
 import ExtraStatsSchema from './things/globalSettings/extrastats.js'
 import GlobalWeaponTypesSchema from './things/globalSettings/weapontypes.js'
-import combatExtrasRoutes from './server/things_routes/globalSettings/combatextras_routes.js'
-import globalExperiencesRoutes from './server/things_routes/globalSettings/experiences_routes.js'
-import extraStatsRoutes from './server/things_routes/globalSettings/extrastats_routes.js'
-import weaponTypesRoutes from './server/things_routes/globalSettings/weapontypes_routes.js'
-import SkillRoutes from './server/things_routes/person_adjacents/skills/skill_routes.js'
-import UnitClassRoutes from './server/things_routes/person_adjacents/classes/unitclasses_routes.js'
 import {checkHighest} from './server/functions/data_management/hexuids.js'
+
+import Map from './server/data_maps.js'
 
 const app = express()
 const port = 9194
@@ -115,14 +110,6 @@ const setConnection = async (req, res, next) => {
 }
 
 app.use(setConnection, attachHighest, attachCombatExtras, attachGlobalExperiences, attachExtraStats, attachGlobalWeaponTypes)
-app.use('/unit', unit)
-app.use('/combatextras', combatExtrasRoutes)
-app.use('/globalexperiences', globalExperiencesRoutes)
-app.use('/extrastats', extraStatsRoutes)
-app.use('/weapontypes', weaponTypesRoutes)
-app.use('/skills', SkillRoutes)
-app.use('/unitclasses', UnitClassRoutes)
-
 
 app.post('/', async (req, res) => {
     if (!req.body.userId){
@@ -134,6 +121,29 @@ app.post('/', async (req, res) => {
 
     if (connections[req.body.userId] && req.body.key === process.env.HANDSHAKE_KEY){
         return res.status(200).json({success: true, message: connections[req.body.userId].dbName})
+    } 
+    else {
+        return res.status(500).json({success: false, message: 'Unable to establish a connection'})
+    }
+})
+
+app.post('/data', async (req, res) => {
+    if (!req.body.userId){
+        return res.status(400).json({success: false, message: 'No user ID provided'})
+    }
+    if (!req.body.key){
+        return res.status(400).json({success: false, message: 'No key provided'})
+    }
+    if (!req.body.action){
+        return res.status(400).json({success: false, message: 'No data provided'})
+    }
+
+    if (connections[req.body.userId] && req.body.key === process.env.HANDSHAKE_KEY){
+        let db = connections[req.body.userId].db
+        let action = req.body.action
+        let model = db.model(action.model)
+        let method = action.method
+        Map(model, method, req, res)
     } 
     else {
         return res.status(500).json({success: false, message: 'Unable to establish a connection'})

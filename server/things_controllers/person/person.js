@@ -8,9 +8,6 @@ import Enemy from '../../../things/person/enemy.js'
 
 import {uid} from '../../functions/data_management/hexuids.js' 
 
-import express from 'express'
-const router = express.Router()
-
 const getPeople = asyncHandler(async (req, res) => {
     const Person = req.connection.model('Person', PersonSchema)
     const people = await Person.find({})
@@ -245,18 +242,18 @@ const getNpc = asyncHandler(async (req, res) => {
     }
 })
 
-router.route('/').get(getPeople)
-router.route('/').post(createPerson)
-router.route('/:id').get(getPerson)
-router.route('/_id/:id').get(getPersonByMongoId)
-router.route('/:id').put(updatePerson)
-router.route('/:id').delete(deletePerson)
-router.route('/_id/:id').delete(deletePersonByMongoId)
-router.route('/undo/:id/').post(rollback)
-router.route('/details').post(getDetails)
-router.route('/avatar').post(getAvatar)
-router.route('/friend').post(getFriend)
-router.route('/enemy').post(getEnemy)
-router.route('/npc').post(getNpc)
-
-export default router
+export {
+    getPeople,
+    createPerson,
+    getPersonByMongoId,
+    getPerson,
+    updatePerson,
+    deletePerson,
+    deletePersonByMongoId,
+    rollback,
+    getDetails,
+    getAvatar,
+    getFriend,
+    getEnemy,
+    getNpc
+}
