@@ -29,10 +29,6 @@ const deleteSkill = asyncHandler(async (req, res) => {
     res.json({success: true, message: "Skill deleted"})
 })
 
-router.route('/').get(getSkills).post(createSkill)
-router.route('/_id/:id').get(getSkillByMongoId)
-router.route('/:id').get(GetSkill).put(updateSkill).delete(deleteSkill)
-
 export {
     getSkills,
     getSkillByMongoId,
