@@ -1,6 +1,5 @@
 import mongoose from 'mongoose'
 import dotenv from 'dotenv'
-import generateDbName from './server/functions/database_management/projectdb.js'
 import { fileURLToPath } from 'url'
 import path from 'path'
 import fs from 'fs'
@@ -43,16 +42,16 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
 const attachHighest = async (req, res, next) => {
-    if (!req.userId) {
-        req.userId = Buffer.from(req.ip).toString('base64')
+    if (!req.body.userId) {
+        throw new Error('No user ID provided')
     }
-    if (!req.highest) {
+    if (!req.user.highest) {
         let check = await checkHighest()
         req.highest = parseInt(check, 16)
     }
-    if (connections[req.userId]) {
-        req.connection = connections[req.userId].connection
-        req.dbName = connections[req.userId].dbName
+    if (connections[req.body.userId]) {
+        req.connection = connections[req.body.userId].connection
+        req.dbName = connections[req.body.userId].dbName
         mongoose.connection.useDb(req.connection.dbName)
     }
     next()
@@ -91,14 +90,14 @@ const attachGlobalWeaponTypes = async (req, res, next) => {
 }
 
 const setConnection = async (req, res, next) => {
-    if (!req.userId) {
-        req.userId = Buffer.from(req.ip).toString('base64')
+    if (!req.body.userId) {
+        throw new Error('No user ID provided')
     }
 
-    if (!connections[req.userId]) {
-        let dbName = storedConnections[req.userId] || generateDbName()
+    if (!connections[req.body.userId]) {
+        let dbName = storedConnections[req.body.userId] ||  "_trdb_" + req.body.userId
         let connection = await mongoose.connect(process.env.MONGO_STRING, { useNewUrlParser: true, useUnifiedTopology: true, retryReads: true, retryWrites: true, dbName: dbName })
-        connections[req.userId] = {
+        connections[req.body.userId] = {
             connection: connection,
             dbName: dbName,
             db: mongoose.connection.useDb(dbName),
@@ -107,11 +106,11 @@ const setConnection = async (req, res, next) => {
         console.log('Database Connected')
         await init(connection)
 
-        storedConnections[req.userId] = dbName
+        storedConnections[req.body.userId] = dbName
         fs.writeFileSync(connectionsFilePath, JSON.stringify(storedConnections))
     }
 
-    req.connection = connections[req.userId].connection
+    req.connection = connections[req.body.userId].connection
     next()
 }
 
@@ -125,13 +124,16 @@ app.use('/skills', SkillRoutes)
 app.use('/unitclasses', UnitClassRoutes)
 
 
-app.get('/', async (req, res) => {
-    if (!req.userId){
+app.post('/', async (req, res) => {
+    if (!req.body.userId){
         return res.status(400).json({success: false, message: 'No user ID provided'})
     }
+    if (!req.body.key){
+        return res.status(400).json({success: false, message: 'No key provided'})
+    }
 
-    if (connections[req.userId]){
-        return res.status(200).json({success: true, message: 'Connected to ' + connections[req.userId].dbName})
+    if (connections[req.body.userId] && req.body.key === process.env.HANDSHAKE_KEY){
+        return res.status(200).json({success: true, message: connections[req.body.userId].dbName})
     } 
     else {
         return res.status(500).json({success: false, message: 'Unable to establish a connection'})
