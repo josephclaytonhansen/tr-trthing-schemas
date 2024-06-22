@@ -134,16 +134,20 @@ app.post('/data', async (req, res) => {
     if (!req.body.key){
         return res.status(400).json({success: false, message: 'No key provided'})
     }
-    if (!req.body.action){
+    if (!req.body.actions){
         return res.status(400).json({success: false, message: 'No data provided'})
     }
 
     if (connections[req.body.userId] && req.body.key === process.env.HANDSHAKE_KEY){
         let db = connections[req.body.userId].db
-        let action = req.body.action
+        let actions = req.body.actions
+        actions.forEach(action => {
         let model = db.model(action.model)
         let method = action.method
         Map(model, method, req, res)
+        })
+
+        return res.status(200).json({success: true, message: 'Data processed'})
     } 
     else {
         return res.status(500).json({success: false, message: 'Unable to establish a connection'})
