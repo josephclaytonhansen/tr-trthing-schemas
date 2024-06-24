@@ -124,7 +124,7 @@ app.post('/', async (req, res) => {
         return res.status(400).json({success: false, message: 'No key provided'})
     }
 
-    if (connections[req.body.userId] && req.body.key === process.env.HANDSHAKE_KEY){
+    if (connections[req.body.userId] && req.body.key + '-' + process.env.HANDSHAKE_KEY === process.env.FULL_HANDSHAKE_KEY){
         return res.status(200).json({success: true, message: connections[req.body.userId].dbName})
     } 
     else {
