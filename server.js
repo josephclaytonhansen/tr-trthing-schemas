@@ -40,6 +40,11 @@ const attachHighest = async (req, res, next) => {
     if (!req.body.userId) {
         throw new Error('No user ID provided')
     }
+    if (!req.user) {
+        req.user = {
+            userId: req.body.userId
+        }
+    }
     if (!req.user.highest) {
         let check = await checkHighest()
         req.highest = parseInt(check, 16)
