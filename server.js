@@ -137,18 +137,20 @@ app.post('/', async (req, res) => {
 
 app.post('/data', async (req, res) => {
     if (!req.body.userId){
+        console.log('No user ID provided')
         return res.status(400).json({success: false, message: 'No user ID provided'})
     }
     if (!req.body.key){
+        console.log('No key provided')
         return res.status(400).json({success: false, message: 'No key provided'})
     }
     if (!req.body.actions){
+        console.log('No data provided')
         return res.status(400).json({success: false, message: 'No data provided'})
     }
-
-    if (connections[req.body.userId] && req.body.key === process.env.HANDSHAKE_KEY){
+    if (connections[req.body.userId] && (req.body.key + '-' + process.env.HANDSHAKE_KEY) === process.env.FULL_HANDSHAKE_KEY){
         let db = connections[req.body.userId].db
-        let actions = req.body.actions
+        let actions = req.body.actions.actions
         actions.forEach(action => {
         let model = db.model(action.model)
         let method = action.method
