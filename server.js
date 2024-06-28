@@ -27,6 +27,7 @@ import CombatExtrasSchema from './things/globalSettings/combat/combatextras.js'
 import GlobalExperiencesSchema from './things/globalSettings/experiences.js'
 import ExtraStatsSchema from './things/globalSettings/extrastats.js'
 import GlobalWeaponTypesSchema from './things/globalSettings/weapontypes.js'
+
 import {checkHighest} from './server/functions/data_management/hexuids.js'
 
 import Map from './server/data_maps.js'
@@ -149,15 +150,13 @@ app.post('/data', async (req, res) => {
         return res.status(400).json({success: false, message: 'No data provided'})
     }
     if (connections[req.body.userId] && (req.body.key + '-' + process.env.HANDSHAKE_KEY) === process.env.FULL_HANDSHAKE_KEY){
+        console.log(req.body)
         let db = connections[req.body.userId].db
-        let actions = req.body.actions.actions
-        actions.forEach(action => {
-        let model = db.model(action.model)
+        let actions = req.body.actions.actions || req.body.actions
+        actions.forEach(async action => {
         let method = action.method
-        Map(model, method, req, res)
+        await Map(action.model, method, req, res)
         })
-
-        return res.status(200).json({success: true, message: 'Data processed'})
     } 
     else {
         return res.status(500).json({success: false, message: 'Unable to establish a connection'})
