@@ -3,14 +3,8 @@ import { Schema } from 'mongoose'
 
 import {uid} from '../../server/functions/data_management/hexuids.js'
 
-import Avatar from './avatar.js'
-import Enemy from './enemy.js'
-import Friend from './friend.js'
-import Npc from './npc.js'
 import UnitClass from '../person_adjacents/classes/unitclass.js'
-import Details from './details.js'
 import {Battalion} from '../person_adjacents/battalions/battalion.js'
-import {Goal} from '../person_adjacents/goals/goal.js'
 
 import _StatSet from '../numbers/stats/statset.js'
 import _StatGrowths from '../numbers/stats/growths.js'
@@ -22,228 +16,148 @@ import _BaseBehavior from '../algorithms/units/basebehavior.js'
 
 const personSchema = new Schema({
     id: String,
-    which: String,
-    _undoData: Object,
-    _avatar: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Avatar'},
-    _npc: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Npc'
+    which: {
+        type: String,
+        required: true,
+        enum: ['avatar', 'npc', 'enemy', 'friend'],
+        default: 'enemy'
     },
-    _enemy: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Enemy'
+    name: {
+        type: String,
+        required: true,
+        default: 'New Unit'
     },
-    _friend: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Friend'
+    fullName: {
+        type: String,
+        default: 'Newly Created Unit'
     },
-    _details: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Details'
+    age: {
+        type: Number,
+        default: 18
     },
-    _isAvatar: Boolean,
-    _isNpc: Boolean,
-    _isEnemy: Boolean,
-    _isFriend: Boolean,
-    _supports: {
+    pronouns: {
+        singular: {type: String, default: 'they'},
+        possessive: {type:String, default: 'their'},
+        possessives: {type:String, default: 'theirs'},
+        object: {type:String, default: 'them'}
+    },
+    height: {type:Number, default: 166},
+    birthday: {
+        month: {type:Number, default: 1},
+        day: {type:Number, default: 1}
+    },
+    shortDescription: {type:String, default: 'A new unit'},
+    notes: {type:String, default: 'Take private notes (only in the editor) about this unit'},
+    team: String,
+    title: {type:String, default: ''},
+    specialUnitClasses: Array,
+    specialSkills: Array,
+    portraits: Object,
+    sprites: Object,
+    accentColor1: {type:String, default: '#000000'},
+    accentColor2: {type:String, default: '#000000'},
+    useAccentColors: {type:Boolean, default: false},
+    canSSupport: {type:Boolean, default: false},
+    canHaveChildren: {type:Boolean, default: false},
+    isRecruitable: {type:Boolean, default: false},
+    isUnique: {type:Boolean, default: false},
+    baseStats: {
+        type: Object,
+    },
+    currentStats: {
+        type: Object,
+    },
+    statGrowths: {
+        type: Object,
+    },
+    skills: {
+        type: Object,
+    },
+    experiences: {
+        type: Object,
+    },
+    experienceGrowths: {
+        type: Object,
+    },
+    experienceAptitudes: {
+        type: Object,
+    },
+    classExps: {
+        type: Object,
+    },
+    level: Number,
+    unitClass: {
+        ref: 'UnitClass',
+        type: Schema.Types.ObjectId
+    },
+    exp: Number,
+    battalion: {
+        ref: 'Battalion',
+        type: Schema.Types.ObjectId
+    },
+    ai: {
+        type: Object,
+    },
+    undoData: Object,
+    supports: {
         type: Object,
         default: {}
     },
-    _supportPoints: {
+    supportPoints: {
         type: Object,
         default: {}
     },
-    _maxSupportPoints: {
+    maxSupports: {
         type: Object,
         default: {}
     },
-    _goals: Array,
-    _reactions: Object,
+    goals: Array,
 })
 
 personSchema.methods.addSubs = async function(req) {
-    if (this.which === 'avatar') {
-        let baseStats = new _StatSet(req)
-        let currentStats = new _StatSet(req)
-        let statGrowths = new _StatGrowths(req)
-        let skills = []
-        let experiences = new _Experiences(req)
-        let experienceGrowths = new _ExperiencesGrowth(req)
-        let experienceAptitudes = new _ExperiencesAptitude(req)
-        let existingClasses = await UnitClass.find()
-        if (existingClasses.length === 0 || !existingClasses) {
-            req.highest++
-            let unitClass = new UnitClass({
-                name: "New Class",
-                id: await uid(req.highest++),
-            })
-            await unitClass.save()
-            existingClasses = [unitClass]
-        }
-        let unitClass = existingClasses[0]
-        let unitClassId = unitClass.id
-        let classExps = {}
-        classExps[unitClassId] = 0
-
+    let baseStats = new _StatSet(req)
+    let currentStats = new _StatSet(req)
+    let statGrowths = new _StatGrowths(req)
+    let skills = []
+    let experiences = new _Experiences(req)
+    let experienceGrowths = new _ExperiencesGrowth(req)
+    let experienceAptitudes = new _ExperiencesAptitude(req)
+    let existingClasses = await UnitClass.find()
+    if (existingClasses.length === 0 || !existingClasses) {
         req.highest++
-        let bonusStats = new _StatSet(req)
-        let battalion = new Battalion(
-            {
-                id: await uid(req.highest++),
-                name: "New Battalion",
-                bonusStats: bonusStats.toObject(),
-            }
-        )
-        await battalion.save()
-
-        const avatar = new Avatar({ 
-            owner: this.id, 
+        let unitClass = new UnitClass({
+            name: "New Class",
             id: await uid(req.highest++),
-            baseStats: baseStats.toObject(), 
-            currentStats: currentStats.toObject(),
-            statGrowths: statGrowths.toObject(),
-            skills: skills,
-            classExps: classExps,
-            experiences: experiences.json(),
-            experienceGrowths: experienceGrowths.json(),
-            experienceAptitudes: experienceAptitudes.json(),
-            unitClass: unitClass,
-            battalion: battalion.toObject(),
-            level: 1,
-            exp: 0,
-        } )
-        await avatar.save()
-        this._avatar = avatar._id
-        this._isAvatar = true
-
-    } else if (this.which === 'npc') {
-        const npc = new Npc({ owner: this.id, id: await uid(req.highest++)} )
-        await npc.save()
-        this._npc = npc._id
-        this._isNpc = true
-
-    } else if (this.which === 'enemy') {
-        let baseStats = new _StatSet(req)
-        let currentStats = new _StatSet(req)
-        let statGrowths = new _StatGrowths(req)
-        let skills = []
-        let experiences = new _Experiences(req)
-        let experienceGrowths = new _ExperiencesGrowth(req)
-        let experienceAptitudes = new _ExperiencesAptitude(req)
-        let existingClasses = await UnitClass.find()
-        if (existingClasses.length === 0 || !existingClasses) {
-            let unitClass = new UnitClass({
-                name: "New Class",
-                id: "newclass",
-
-            })
-            await unitClass.save()
-            existingClasses = [unitClass]
-        }
-        let unitClass = existingClasses[0]
-        let classExps = {[existingClasses[0]["id"]]: 0}
-        req.highest++
-        let bonusStats = new _StatSet(req)
-        let battalion = new Battalion(
-            {
-                id: await uid(req.highest++),
-                name: "New Battalion",
-                bonusStats: bonusStats.toObject(),
-            }
-        )
-        await battalion.save()
-        let ai = new _Personality(req)
-        let baseBehavior = new _BaseBehavior(req)
-
-        const enemy = new Enemy({ 
-            owner: this.id, 
-            id: await uid(req.highest++),
-            baseStats: baseStats.toObject(), 
-            currentStats: currentStats.toObject(),
-            statGrowths: statGrowths.toObject(),
-            skills: skills,
-            experiences: experiences.toObject(),
-            experienceGrowths: experienceGrowths.toObject(),
-            experienceAptitudes: experienceAptitudes.toObject(),
-            unitClass: unitClass,
-            classExps: classExps,
-            battalion: battalion.toObject(),
-            level: 1,
-            exp: 0,
-            ai: ai.toObject(),
-            baseBehavior: baseBehavior.toObject(),
-            unique: false,
-        } )
-        await enemy.save()
-        this._enemy = enemy._id
-        this._isEnemy = true
-
-    } else if (this.which === 'friend') {
-        let baseStats = new _StatSet(req)
-        let currentStats = new _StatSet(req)
-        let statGrowths = new _StatGrowths(req)
-        let skills = []
-        let experiences = new _Experiences(req)
-        let experienceGrowths = new _ExperiencesGrowth(req)
-        let experienceAptitudes = new _ExperiencesAptitude(req)
-        let existingClasses = await UnitClass.find()
-        if (existingClasses.length === 0 || !existingClasses) {
-            let unitClass = new UnitClass({
-                name: "New Class",
-                id: "newclass",
-
-            })
-            await unitClass.save()
-            existingClasses = [unitClass]
-        }
-        let unitClass = existingClasses[0]
-        let classExps = {[existingClasses[0]["id"]]: 0}
-        req.highest++
-        let bonusStats = new _StatSet(req)
-        let battalion = new Battalion(
-            {
-                id: await uid(req.highest++),
-                name: "New Battalion",
-                bonusStats: bonusStats.toObject(),
-            }
-        )
-        await battalion.save()
-        let ai = new _Personality(req)
-        let baseBehavior = new _BaseBehavior(req)
-
-        const friend = new Friend({ 
-            owner: this.id, 
-            id: await uid(req.highest++),
-            baseStats: baseStats.toObject(), 
-            currentStats: currentStats.toObject(),
-            statGrowths: statGrowths.toObject(),
-            skills: skills.toObject(),
-            experiences: experiences.toObject(),
-            experienceGrowths: experienceGrowths.toObject(),
-            experienceAptitudes: experienceAptitudes.toObject(),
-            unitClass: unitClass,
-            classExps: classExps,
-            battalion: battalion.toObject(),
-            level: 1,
-            exp: 0,
-            ai: ai.toObject(),
-            baseBehavior: baseBehavior.toObject(),
-            unique: false,
-        } )
-        await friend.save()
-        this._friend = friend._id
-        this._isFriend = true
+        })
+        await unitClass.save()
+        existingClasses = [unitClass]
     }
+    let unitClass = existingClasses[0]
+    let unitClassId = unitClass.id
+    let classExps = {}
+    classExps[unitClassId] = 0
 
-    const details = new Details({ owner: this.id, id: await uid(req.highest++)} )
-    await details.save()
-    this._details = details._id
+    this.baseStats = baseStats.toObject()
+    this.currentStats = currentStats.toObject()
+    this.statGrowths = statGrowths.toObject()
+    this.skills = skills
+    this.experiences = experiences.toObject()
+    this.experienceGrowths = experienceGrowths.toObject()
+    this.experienceAptitudes = experienceAptitudes.toObject()
+    this.classExps = classExps
+    this.level = 1
+    this.unitClass = unitClass._id
+    this.exp = 0
 
-    const goal = new Goal({ owner: this.id, id: await uid(req.highest++)} )
-    await goal.save()
-    this._goals = [goal._id]
+    let bonusStats = new _StatSet(req)
+    let battalion = new Battalion(
+        {
+            id: await uid(req.highest++),
+            name: "New Battalion",
+            bonusStats: bonusStats.toObject(),
+        }
+    )
+    await battalion.save()
 
     await this.save()
 }
@@ -263,56 +177,44 @@ personSchema.methods.rollback = async function() {
     }
 }
 
-personSchema.methods.toJSON = function(combatExtras) {
+personSchema.methods.toJSON = function() {
     let returns = {
         id: this.id,
         which: this.which,
-        details: this._details,
-        isAvatar: this.get('_isAvatar'),
-        isNpc: this.get('_isNpc'),
-        isEnemy: this.get('_isEnemy'),
-        isFriend: this.get('_isFriend'),
-        props: [
-            '_avatar',
-            '_npc',
-            '_enemy',
-            '_friend',
-            '_details',
-            '_isAvatar',
-            '_isNpc',
-            '_isEnemy',
-            '_isFriend',
-            '_supports',
-            '_supportPoints',
-            '_maxSupportPoints',
-            '_goals',
-        ],
-    }
-    if (!this.get('_isNpc') || this.get('_isEnemy') || this.get('_isFriend') || this.get('_isAvatar')) {
-        if (!this.get('_isEnemy')){
-        }
-        returns.combatData = {
-            baseStats: this.get('_enemy')?.baseStats || this.get('_friend')?.baseStats || this.get('_avatar')?.baseStats,
-            currentStats: this.get('_enemy')?.currentStats || this.get('_friend')?.currentStats || this.get('_avatar')?.currentStats,
-            statGrowths: this.get('_enemy')?.statGrowths || this.get('_friend')?.statGrowths || this.get('_avatar')?.statGrowths,
-            experiences: this.get('_enemy')?.experiences || this.get('_friend')?.experiences || this.get('_avatar')?.experiences,
-            experienceGrowths: this.get('_enemy')?.experienceGrowths || this.get('_friend')?.experienceGrowths || this.get('_avatar')?.experienceGrowths,
-            experienceAptitudes: this.get('_enemy')?.experienceAptitudes || this.get('_friend')?.experienceAptitudes || this.get('_avatar')?.experienceAptitudes,
-            skills: this.get('_enemy')?.skills || this.get('_friend')?.skills || this.get('_avatar')?.skills,
-            level: this.get('_enemy')?.level || this.get('_friend')?.level || this.get('_avatar')?.level,
-            unitClass: this.get('_enemy')?.unitClass || this.get('_friend')?.unitClass || this.get('_avatar')?.unitClass,
-            exp: this.get('_enemy')?.exp || this.get('_friend')?.exp || this.get('_avatar')?.exp,
-            unique: this.get('_enemy')?.unique || this.get('_friend')?.unique,
-        }
-
-        if (combatExtras && combatExtras.battalions){
-            returns.combatData.battalion = this.get('_enemy')?.battalion || this.get('_friend')?.battalion || this.get('_avatar')?.battalion
-        }
-    }
-
-    if (returns.combatData) {
-        returns.combatData.ai = this.get('_friend')?.ai || this.get('_enemy')?.ai
-        returns.combatData.baseBehavior = this.get('_friend')?.baseBehavior || this.get('_enemy')?.baseBehavior
+        name: this.name,
+        fullName: this.fullName,
+        age: this.age,
+        pronouns: this.pronouns,
+        height: this.height,
+        birthday: this.birthday,
+        shortDescription: this.shortDescription,
+        team: this.team,
+        title: this.title,
+        specialUnitClasses: this.specialUnitClasses,
+        specialSkills: this.specialSkills,
+        portraits: this.portraits,
+        sprites: this.sprites,
+        accentColor1: this.accentColor1,
+        accentColor2: this.accentColor2,
+        useAccentColors: this.useAccentColors,
+        Notes: this.notes,
+        canSSupport: this.canSSupport,
+        canHaveChildren: this.canHaveChildren,
+        isRecruitable: this.isRecruitable,
+        isUnique: this.isUnique,
+        baseStats: this.baseStats,
+        currentStats: this.currentStats,
+        statGrowths: this.statGrowths,
+        skills: this.skills,
+        experiences: this.experiences,
+        experienceGrowths: this.experienceGrowths,
+        experienceAptitudes: this.experienceAptitudes,
+        classExps: this.classExps,
+        level: this.level,
+        unitClass: this.unitClass,
+        exp: this.exp,
+        battalion: this.battalion,
+        ai: this.ai
     }
     return returns
 }

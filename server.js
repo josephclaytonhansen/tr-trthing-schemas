@@ -4,6 +4,7 @@ import { fileURLToPath } from 'url'
 import path from 'path'
 import fs from 'fs'
 import morgan from 'morgan'
+import cors from 'cors'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -34,6 +35,12 @@ import Map from './server/data_maps.js'
 
 const app = express()
 const port = 9194
+
+app.use(cors(
+    {
+        origin: process.env.LOCAL === 'true' ?  'http://localhost:26068' : 'https://editor.turnroot.com'
+    }
+))
 
 app.use(morgan('dev'))
 
@@ -94,8 +101,9 @@ const attachGlobalWeaponTypes = async (req, res, next) => {
 }
 
 const setConnection = async (req, res, next) => {
+    console.log("setConnection", req.body)
     if (!req.body.userId) {
-        throw new Error('No user ID provided')
+        return res.status(400).json({success: false, message: 'No user ID provided'})
     }
 
     if (!connections[req.body.userId]) {
@@ -120,6 +128,10 @@ const setConnection = async (req, res, next) => {
 
 app.use(setConnection, attachHighest, attachCombatExtras, attachGlobalExperiences, attachExtraStats, attachGlobalWeaponTypes)
 
+app.get('/', async (req, res) => {
+    res.status(200).json({success: true, message: 'Server is running'})
+})
+
 app.post('/', async (req, res) => {
     if (!req.body.userId){
         return res.status(400).json({success: false, message: 'No user ID provided'})
@@ -137,6 +149,7 @@ app.post('/', async (req, res) => {
 })
 
 app.post('/data', async (req, res) => {
+    console.log("POST to /data", req.body)
     if (!req.body.userId){
         console.log('No user ID provided')
         return res.status(400).json({success: false, message: 'No user ID provided'})
@@ -150,7 +163,6 @@ app.post('/data', async (req, res) => {
         return res.status(400).json({success: false, message: 'No data provided'})
     }
     if (connections[req.body.userId] && (req.body.key + '-' + process.env.HANDSHAKE_KEY) === process.env.FULL_HANDSHAKE_KEY){
-        console.log(req.body)
         let db = connections[req.body.userId].db
         let actions = req.body.actions.actions || req.body.actions
         actions.forEach(async action => {

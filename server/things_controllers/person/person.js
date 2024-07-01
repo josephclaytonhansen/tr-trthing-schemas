@@ -1,10 +1,6 @@
 import asyncHandler from '../../middleware/asyncHandler.js'
 
 import PersonSchema from '../../../things/person/person.js'
-import Details from '../../../things/person/details.js'
-import Avatar from '../../../things/person/avatar.js'
-import Npc from '../../../things/person/npc.js'
-import Enemy from '../../../things/person/enemy.js'
 
 import {uid} from '../../functions/data_management/hexuids.js' 
 
@@ -16,12 +12,13 @@ const getPeople = asyncHandler(async (req, res) => {
 })
 
 const createPerson = asyncHandler(async (req, res) => {
+    console.log(req.body.which)
     const Person = req.connection.model('Person', PersonSchema)
+    req.body.which = req.body.which || req.body.subtype
     if (req.body.which === 'avatar'){
         let numberOfExistingAvatars = await Person.countDocuments( { _avatar: { $exists: true } } )
         if (numberOfExistingAvatars !== 0) {
-            res.status(400)
-            throw new Error('An avatar unit already exists, you cannot create another one.')
+            req.body.which = 'enemy'
         }
     }
     req.highest++
@@ -35,54 +32,12 @@ const createPerson = asyncHandler(async (req, res) => {
 const getPersonByMongoId = asyncHandler(async (req, res) => {
     const Person = req.connection.model('Person', PersonSchema)
     const person = await Person.findById(req.params.id)
-    .populate({
-        path: '_avatar',
-        populate: [
-            { path: 'battalion' },
-            { path: 'unitClass' }
-        ]
-    })
-    .populate({
-        path: '_enemy',
-        populate: [
-            { path: 'battalion' },
-            { path: 'unitClass' }
-        ]
-    })
-    .populate({
-        path: '_friend',
-        populate: [
-            { path: 'battalion' },
-            { path: 'unitClass' }
-        ]
-    })
     res.json(person.toJSON(req.combatExtras))
 })
 
 const getPerson = asyncHandler(async (req, res) => {
     const Person = req.connection.model('Person', PersonSchema)
     const person = await Person.findOne({id: req.params.id})
-    .populate({
-        path: '_avatar',
-        populate: [
-            { path: 'battalion' },
-            { path: 'unitClass' }
-        ]
-    })
-    .populate({
-        path: '_enemy',
-        populate: [
-            { path: 'battalion' },
-            { path: 'unitClass' }
-        ]
-    })
-    .populate({
-        path: '_friend',
-        populate: [
-            { path: 'battalion' },
-            { path: 'unitClass' }
-        ]
-    })
     if (!person) {
         res.status(404)
         throw new Error('Person not found')

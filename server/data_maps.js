@@ -32,10 +32,7 @@ import {
     deleteSkill
 } from './things_controllers/person_adjacents/skills/skill.js'
 
-import{
-    getCombatExtras,
-    updateCombatExtras
-} from './things_controllers/globalSettings/combatextras.js'
+
 
 import {
     getGlobalExperiences,
