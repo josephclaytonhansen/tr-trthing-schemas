@@ -158,16 +158,14 @@ app.post('/data', async (req, res) => {
         console.log('No key provided')
         return res.status(400).json({success: false, message: 'No key provided'})
     }
-    if (!req.body.actions){
-        console.log('No data provided')
-        return res.status(400).json({success: false, message: 'No data provided'})
-    }
     if (connections[req.body.userId] && (req.body.key + '-' + process.env.HANDSHAKE_KEY) === process.env.FULL_HANDSHAKE_KEY){
         let db = connections[req.body.userId].db
         let actions = req.body.actions.actions || req.body.actions
+        let index = -1
         actions.forEach(async action => {
-        let method = action.method
-        await Map(action.model, method, req, res)
+            index++
+            let method = action.method
+            await Map(action.model, method, req, res, index)
         })
     } 
     else {

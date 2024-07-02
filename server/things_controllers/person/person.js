@@ -47,16 +47,20 @@ const getPerson = asyncHandler(async (req, res) => {
 
 const updatePerson = asyncHandler(async (req, res) => {
     const Person = req.connection.model('Person', PersonSchema)
-    try{const person = await Person.findOneAndUpdate({id: req.body.id}, req.body)
-    res.json({success: true, message: 'Person updated'})} catch (err) {
-        res.json({success: false, message: 'Error updating person'})
-    
-    }
+    let body = req.body.actions.actions[req.body.index].body
+    console.log(body)
+    await Person.findOneAndUpdate({id: body.id}, body).then( async(person) => {
+        await person.save()
+        res.json({success: true, message: 'Person updated'})} ).catch( (err) => {
+        res.json({success: false, message: 'Error updating person'})    
+    })
 })
 
 const deletePerson = asyncHandler(async (req, res) => {
     const Person = req.connection.model('Person', PersonSchema)
-    try{const person = await Person.findOneAndDelete({id: req.body.id})
+    let body = req.body.actions.actions[req.body.index].body
+    console.log(body)
+    try{const person = await Person.findOneAndDelete({id: body.id})
     res.json({success: true, message: 'Person deleted'})} catch (err) {
         res.json({success: false, message: 'Error deleting person'})
     
@@ -65,7 +69,9 @@ const deletePerson = asyncHandler(async (req, res) => {
 
 const deletePersonByMongoId = asyncHandler(async (req, res) => {
     const Person = req.connection.model('Person', PersonSchema)
-    try{const person = await Person.findByIdAndDelete(req.body.id)
+    let body = req.body.actions.actions[req.body.index].body
+    console.log(body)
+    try{const person = await Person.findByIdAndDelete(body.id)
     res.json({success: true, message: 'Person deleted'})} catch (err) {
         res.json({success: false, message: 'Error deleting person'})
     }
@@ -73,7 +79,9 @@ const deletePersonByMongoId = asyncHandler(async (req, res) => {
 
 const rollback = asyncHandler(async (req, res) => {
     const Person = req.connection.model('Person', PersonSchema)
-    try{const person = await Person.findOne({id: req.bdy.id})
+    let body = req.body.actions.actions[req.body.index].body
+    console.log(body)
+    try{const person = await Person.findOne({id: body.id})
     if (person) {
         await person.rollback()
         res.json({success: true, message: 'Person rolled back'})

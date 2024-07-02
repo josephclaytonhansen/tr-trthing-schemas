@@ -46,7 +46,8 @@ import {
     updateGlobalWeaponTypes
 } from './things_controllers/globalSettings/weapontypes.js'
 
-const Map = async (model, method, req, res) => {
+const Map = async (model, method, req, res, index) => {
+    req.body.index = index
     switch (model) {
         case 'Person':
             switch (method) {
