@@ -6,12 +6,7 @@ import {
     updatePerson,
     deletePerson,
     deletePersonByMongoId,
-    rollback,
-    getDetails,
-    getAvatar,
-    getFriend,
-    getEnemy,
-    getNpc
+    rollback
 } from './things_controllers/person/person.js'
 
 import {
@@ -78,21 +73,6 @@ const Map = async (model, method, req, res) => {
                     break
                 case 'rollback':
                     await rollback(req, res)
-                    break
-                case 'getDetails':
-                    await getDetails(req, res)
-                    break
-                case 'getAvatar':
-                    await getAvatar(req, res)
-                    break
-                case 'getFriend':
-                    await getFriend(req, res)
-                    break
-                case 'getEnemy':
-                    await getEnemy(req, res)
-                    break
-                case 'getNpc':
-                    await getNpc(req, res)
                     break
                 default:
                     res.status(400).send('Invalid method for model Person')
