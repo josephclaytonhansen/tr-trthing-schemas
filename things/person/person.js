@@ -111,6 +111,23 @@ const personSchema = new Schema({
         type: Object,
         default: {}
     },
+    supportSpeeds: {
+        type: Object,
+        default: {}
+    },
+    passedDownTraits: {
+        type: Array,
+        default: [
+            'Hair color',
+            'Eye color',
+            'Skin color',
+            'Height',
+        ]
+    },
+    childUnit: {
+        type: Schema.Types.ObjectId,
+        ref: 'Person'
+    },
     goals: Array,
 })
 
@@ -214,7 +231,10 @@ personSchema.methods.toJSON = function() {
         unitClass: this.unitClass,
         exp: this.exp,
         battalion: this.battalion,
-        ai: this.ai
+        ai: this.ai,
+        maxSupports: this.maxSupports,
+        passedDownTraits: this.passedDownTraits,
+        childUnit: this.childUnit,
     }
     return returns
 }
