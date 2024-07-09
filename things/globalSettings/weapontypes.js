@@ -2,6 +2,7 @@ import mongoose from 'mongoose'
 import { Schema } from 'mongoose'
 
 const GlobalWeaponTypesSchema = new Schema({
+    id: String,
     types: {
         type: Array,
     }
@@ -9,6 +10,7 @@ const GlobalWeaponTypesSchema = new Schema({
 
 GlobalWeaponTypesSchema.pre('save', function() {
     if (this.isNew) {
+        this.id = 'SIGWT'
         this.types = [
             {
                 name: 'Sword',
