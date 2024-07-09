@@ -149,6 +149,7 @@ app.post('/', async (req, res) => {
 })
 
 app.post('/data', async (req, res) => {
+    try{
     console.log("POST to /data", req.body)
     if (!req.body.userId){
         console.log('No user ID provided')
@@ -170,6 +171,9 @@ app.post('/data', async (req, res) => {
     } 
     else {
         return res.status(500).json({success: false, message: 'Unable to establish a connection'})
+    }} catch (err) {
+        console.error(err)
+        return res.status(500).json({success: false, message: 'Error processing request'})
     }
 })
 
@@ -204,8 +208,17 @@ const init = async(connection) => {
     }
 }
 
+process.on('uncaughtException', (err) => {
+    console.error('Uncaught exception', err)
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('Unhandled promise rejection', reason)
+});
+
 app.use((err, req, res, next) => {
     console.error(err.stack)
+    next()
 })
 
 app.listen(port, () => {
