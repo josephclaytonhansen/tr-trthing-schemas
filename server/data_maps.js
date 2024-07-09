@@ -49,6 +49,15 @@ import {
 const Map = async (model, method, req, res, index) => {
     req.body.index = index
     switch (model) {
+        case 'globalWeaponsTypes':
+            switch (method) {
+                case 'update':
+                    await updateGlobalWeaponTypes(req, res)
+                    break
+                case 'get':
+                    await getGlobalWeaponTypes(req, res)
+                    break
+            }
         case 'Person':
             switch (method) {
                 case 'getPeople':

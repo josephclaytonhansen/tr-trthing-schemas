@@ -204,6 +204,10 @@ const init = async(connection) => {
     }
 }
 
+app.use((err, req, res, next) => {
+    console.error(err.stack)
+})
+
 app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`)
 })

@@ -1,7 +1,8 @@
 import asyncHandler from '../../middleware/asyncHandler.js'
-import GlobalWeaponTypes from '../../../things/globalSettings/weapontypes.js'
+import GlobalWeaponTypesSchema from '../../../things/globalSettings/weapontypes.js'
 
 const getGlobalWeaponTypes = asyncHandler(async (req, res) => {
+    const GlobalWeaponTypes = req.connection.model('GlobalWeaponTypes', GlobalWeaponTypesSchema)
     const weapontypes = await GlobalWeaponTypes.find().limit(1).populate()
     res.json(weapontypes)
 })
