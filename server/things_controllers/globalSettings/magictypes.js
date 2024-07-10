@@ -1,5 +1,5 @@
 import asyncHandler from '../../middleware/asyncHandler.js'
-import GlobalMagicTypesSchema from '../../../things/globalSettings/mag.js'
+import GlobalMagicTypesSchema from '../../../things/globalSettings/magictypes.js'
 
 const getGlobalMagicTypes = asyncHandler(async (req, res) => {
     const GlobalMagicTypes = req.connection.model('GlobalMagicTypes', GlobalMagicTypesSchema)

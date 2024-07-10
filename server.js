@@ -212,6 +212,12 @@ const init = async(connection) => {
             await GlobalWeaponTypes.create({})
         }
 
+        const GlobalMagicTypes = connection.model('GlobalMagicTypes', GlobalMagicTypesSchema)
+        let globalMagicTypes = await GlobalMagicTypes.findOne({})
+        if (!globalMagicTypes) {
+            await GlobalMagicTypes.create({})
+        }
+
     } catch (err) {
         console.error(err)
     }

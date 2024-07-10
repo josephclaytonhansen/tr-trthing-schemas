@@ -46,6 +46,11 @@ import {
     updateGlobalWeaponTypes
 } from './things_controllers/globalSettings/weapontypes.js'
 
+import {
+    getGlobalMagicTypes,
+    updateGlobalMagicTypes
+} from './things_controllers/globalSettings/magictypes.js'
+
 const Map = async (model, method, req, res, index) => {
     req.body.index = index
     switch (model) {
@@ -58,6 +63,17 @@ const Map = async (model, method, req, res, index) => {
                     await getGlobalWeaponTypes(req, res)
                     break
             }
+            break
+        case 'globalMagicTypes':
+            switch (method) {
+                case 'update':
+                    await updateGlobalMagicTypes(req, res)
+                    break
+                case 'get':
+                    await getGlobalMagicTypes(req, res)
+                    break
+            }
+            break
         case 'Person':
             switch (method) {
                 case 'getPeople':
