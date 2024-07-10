@@ -8,6 +8,7 @@ const getGlobalWeaponTypes = asyncHandler(async (req, res) => {
 })
 
 const updateGlobalWeaponTypes = asyncHandler(async (req, res) => {
+    const GlobalWeaponTypes = req.connection.model('GlobalWeaponTypes', GlobalWeaponTypesSchema)
     await GlobalWeaponTypes.findOneAndUpdate({}, req.body).populate()
     res.status(201).json({success: true, message: 'GlobalWeaponTypes updated'})
 })

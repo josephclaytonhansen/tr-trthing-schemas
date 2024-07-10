@@ -16,7 +16,6 @@ GlobalWeaponTypesSchema.pre('save', function() {
                 name: 'Sword',
                 icon: '',
                 id: 'sword',
-                magic: false,
                 ranges: [1, 2],
                 defaultRange: 1
             },
@@ -24,7 +23,6 @@ GlobalWeaponTypesSchema.pre('save', function() {
                 name: 'Lance',
                 icon: '',
                 id: 'lance',
-                magic: false,
                 ranges: [1, 2],
                 defaultRange: 1
             },
@@ -32,7 +30,6 @@ GlobalWeaponTypesSchema.pre('save', function() {
                 name: 'Axe',
                 icon: '',
                 id: 'axe',
-                magic: false,
                 ranges: [1, 2],
                 defaultRange: 1
             },
@@ -40,7 +37,6 @@ GlobalWeaponTypesSchema.pre('save', function() {
                 name: 'Bow',
                 icon: '',
                 id: 'bow',
-                magic: false,
                 ranges: [1, 2, 3, 4],
                 defaultRange: 2
             },
@@ -48,7 +44,6 @@ GlobalWeaponTypesSchema.pre('save', function() {
                 name: 'Gauntlet',
                 icon: '',
                 id: 'gauntlet',
-                magic: false,
                 ranges: [1],
                 defaultRange: 1
             },
@@ -56,7 +51,6 @@ GlobalWeaponTypesSchema.pre('save', function() {
                 name: 'Dagger',
                 icon: '',
                 id: 'dagger',
-                magic: false,
                 ranges: [1, 2],
                 defaultRange: 1
             }

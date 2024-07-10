@@ -28,6 +28,7 @@ import CombatExtrasSchema from './things/globalSettings/combat/combatextras.js'
 import GlobalExperiencesSchema from './things/globalSettings/experiences.js'
 import ExtraStatsSchema from './things/globalSettings/extrastats.js'
 import GlobalWeaponTypesSchema from './things/globalSettings/weapontypes.js'
+import GlobalMagicTypesSchema from './things/globalSettings/magictypes.js'
 
 import {checkHighest} from './server/functions/data_management/hexuids.js'
 
@@ -100,6 +101,14 @@ const attachGlobalWeaponTypes = async (req, res, next) => {
     next()
 }
 
+const attachGlobalMagicTypes = async (req, res, next) => {
+    if (!req.magicTypes) {
+        const GlobalMagicTypes = req.connection.model('GlobalMagicTypes', GlobalMagicTypesSchema)
+        req.magicTypes = await GlobalMagicTypes.findOne()
+    }
+    next()
+}
+
 const setConnection = async (req, res, next) => {
     console.log("setConnection", req.body)
     if (!req.body.userId) {
@@ -126,7 +135,7 @@ const setConnection = async (req, res, next) => {
     next()
 }
 
-app.use(setConnection, attachHighest, attachCombatExtras, attachGlobalExperiences, attachExtraStats, attachGlobalWeaponTypes)
+app.use(setConnection, attachHighest, attachCombatExtras, attachGlobalExperiences, attachExtraStats, attachGlobalWeaponTypes, attachGlobalMagicTypes)
 
 app.get('/', async (req, res) => {
     res.status(200).json({success: true, message: 'Server is running'})
