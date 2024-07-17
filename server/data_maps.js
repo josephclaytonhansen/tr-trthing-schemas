@@ -49,6 +49,34 @@ import {
     updateGlobalMagicTypes
 } from './things_controllers/globalSettings/magictypes.js'
 
+import {
+    getObjectConsumable,
+    createObjectConsumable,
+    updateObjectConsumable,
+    deleteObjectConsumable
+} from './things_controllers/object/objectconsumable.js'
+
+import {
+    getObjectWeapon,
+    createObjectWeapon,
+    updateObjectWeapon,
+    deleteObjectWeapon
+} from './things_controllers/object/objectweapon.js'
+
+import {
+    getObjectGift,
+    createObjectGift,
+    updateObjectGift,
+    deleteObjectGift
+} from './things_controllers/object/objectgift.js'
+
+import {
+    getObjectEquipable,
+    createObjectEquipable,
+    updateObjectEquipable,
+    deleteObjectEquipable
+} from './things_controllers/object/objectequipable.js'
+
 const Map = async (model, method, req, res, index) => {
     req.body.index = index
     switch (model) {
@@ -69,6 +97,70 @@ const Map = async (model, method, req, res, index) => {
                     break
                 case 'get':
                     await getGlobalMagicTypes(req, res)
+                    break
+            }
+            break
+        case 'objectConsumable':
+            switch (method) {
+                case 'get':
+                    await getObjectConsumable(req, res)
+                    break
+                case 'create':
+                    await createObjectConsumable(req, res)
+                    break
+                case 'update':
+                    await updateObjectConsumable(req, res)
+                    break
+                case 'delete':
+                    await deleteObjectConsumable(req, res)
+                    break
+            }
+            break
+        case 'objectWeapon':
+            switch (method) {
+                case 'get':
+                    await getObjectWeapon(req, res)
+                    break
+                case 'create':
+                    await createObjectWeapon(req, res)
+                    break
+                case 'update':
+                    await updateObjectWeapon(req, res)
+                    break
+                case 'delete':
+                    await deleteObjectWeapon(req, res)
+                    break
+            }
+            break
+        case 'objectGift':
+            switch (method) {
+                case 'get':
+                    await getObjectGift(req, res)
+                    break
+                case 'create':
+                    await createObjectGift(req, res)
+                    break
+                case 'update':
+                    await updateObjectGift(req, res)
+                    break
+                case 'delete':
+                    await deleteObjectGift(req, res)
+                    break
+            }
+            break
+        case 'objectEquipable':
+            switch (method) {
+                case 'get':
+                    await getObjectEquipable(req, res)
+                    break
+                case 'create':
+                    await createObjectEquipable(req, res)
+                    break
+                case 'update':
+                    await updateObjectEquipable(req, res)
+                    break
+                case 'delete':
+                    await deleteObjectEquipable(req, res)
                     break
             }
             break
