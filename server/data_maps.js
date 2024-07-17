@@ -77,6 +77,8 @@ import {
     deleteObjectEquipable
 } from './things_controllers/object/objectequipable.js'
 
+import {getObjects} from './things_controllers/object/object.js'
+
 const Map = async (model, method, req, res, index) => {
     req.body.index = index
     switch (model) {
@@ -161,6 +163,13 @@ const Map = async (model, method, req, res, index) => {
                     break
                 case 'delete':
                     await deleteObjectEquipable(req, res)
+                    break
+            }
+            break
+        case 'Object':
+            switch (method) {
+                case 'getObjects':
+                    await getObjects(req, res)
                     break
             }
             break
