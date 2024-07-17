@@ -27,8 +27,6 @@ import {
     deleteSkill
 } from './things_controllers/person_adjacents/skills/skill.js'
 
-
-
 import {
     getGlobalExperiences,
     updateGlobalExperiences,
