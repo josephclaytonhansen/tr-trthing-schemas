@@ -42,10 +42,8 @@ const personSchema = new Schema({
         object: {type:String, default: 'them'}
     },
     height: {type:Number, default: 166},
-    birthday: {
-        month: {type:Number, default: 1},
-        day: {type:Number, default: 1}
-    },
+    birthdayDay: {type:Number, default: 1},
+    birthdayMonth: {type:Number, default: 1},
     shortDescription: {type:String, default: 'A new unit'},
     notes: {type:String, default: 'Take private notes (only in the editor) about this unit'},
     team: String,
