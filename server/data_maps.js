@@ -77,6 +77,11 @@ import {
     deleteObjectEquipable
 } from './things_controllers/object/objectequipable.js'
 
+import {
+    getGameDetails,
+    updateGameDetails
+} from './things_controllers/globalSettings/gamedetails.js'
+
 import {getObjects} from './things_controllers/object/object.js'
 
 const Map = async (model, method, req, res, index) => {
@@ -89,6 +94,17 @@ const Map = async (model, method, req, res, index) => {
                     break
                 case 'get':
                     await getGlobalWeaponTypes(req, res)
+                    break
+            }
+            break
+        case 'gameDetails':
+            console.log('gameDetails')
+            switch (method) {
+                case 'update':
+                    await updateGameDetails(req, res)
+                    break
+                case 'get':
+                    await getGameDetails(req, res)
                     break
             }
             break

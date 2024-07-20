@@ -29,6 +29,7 @@ import GlobalExperiencesSchema from './things/globalSettings/experiences.js'
 import ExtraStatsSchema from './things/globalSettings/extrastats.js'
 import GlobalWeaponTypesSchema from './things/globalSettings/weapontypes.js'
 import GlobalMagicTypesSchema from './things/globalSettings/magictypes.js'
+import GameDetailsSchema from './things/globalSettings/gamedetails.js'
 
 import {checkHighest} from './server/functions/data_management/hexuids.js'
 
@@ -109,6 +110,14 @@ const attachGlobalMagicTypes = async (req, res, next) => {
     next()
 }
 
+const attachGameDetails = async (req, res, next) => {
+    if (!req.gameDetails) {
+        const GameDetails = req.connection.model('GameDetails', GameDetailsSchema)
+        req.gameDetails = await GameDetails.findOne()
+    }
+    next()
+}
+
 const setConnection = async (req, res, next) => {
     console.log("setConnection", req.body)
     if (!req.body.userId) {
@@ -135,7 +144,7 @@ const setConnection = async (req, res, next) => {
     next()
 }
 
-app.use(setConnection, attachHighest, attachCombatExtras, attachGlobalExperiences, attachExtraStats, attachGlobalWeaponTypes, attachGlobalMagicTypes)
+app.use(setConnection, attachHighest, attachCombatExtras, attachGlobalExperiences, attachExtraStats, attachGlobalWeaponTypes, attachGlobalMagicTypes, attachGameDetails)
 
 app.get('/', async (req, res) => {
     res.status(200).json({success: true, message: 'Server is running'})
@@ -216,6 +225,12 @@ const init = async(connection) => {
         let globalMagicTypes = await GlobalMagicTypes.findOne({})
         if (!globalMagicTypes) {
             await GlobalMagicTypes.create({})
+        }
+
+        const GameDetails = connection.model('GameDetails', GameDetailsSchema)
+        let gameDetails = await GameDetails.findOne({})
+        if (!gameDetails) {
+            await GameDetails.create({})
         }
 
     } catch (err) {
