@@ -49,6 +49,14 @@ const updatePerson = asyncHandler(async (req, res) => {
     const Person = req.connection.model('Person', PersonSchema)
     let body = req.body.actions.actions[req.body.index].body
     console.log(body)
+    let splitPronouns = body.pronouns.split('/')
+    let pronounsObject = {
+        singular: splitPronouns[0],
+        possessive: splitPronouns[1],
+        possessives: splitPronouns[2],
+        object: splitPronouns[3],
+    }
+    body.pronouns = pronounsObject
     await Person.findOneAndUpdate({id: body.id}, body).then( async(person) => {
         await person.save()
         res.json({success: true, message: 'Person updated'})} ).catch( (err) => {
@@ -58,8 +66,6 @@ const updatePerson = asyncHandler(async (req, res) => {
 
 const deletePerson = asyncHandler(async (req, res) => {
     const Person = req.connection.model('Person', PersonSchema)
-    let body = req.body.actions.actions[req.body.index].body
-    console.log(body)
     try{const person = await Person.findOneAndDelete({id: body.id})
     res.json({success: true, message: 'Person deleted'})} catch (err) {
         res.json({success: false, message: 'Error deleting person'})
