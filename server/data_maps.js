@@ -82,6 +82,11 @@ import {
     updateGameDetails
 } from './things_controllers/globalSettings/gamedetails.js'
 
+import {
+    getGeneralSettings,
+    updateGeneralSettings
+} from './things_controllers/globalSettings/general.js'
+
 import {getObjects} from './things_controllers/object/object.js'
 
 const Map = async (model, method, req, res, index) => {
@@ -98,13 +103,22 @@ const Map = async (model, method, req, res, index) => {
             }
             break
         case 'gameDetails':
-            console.log('gameDetails')
             switch (method) {
                 case 'update':
                     await updateGameDetails(req, res)
                     break
                 case 'get':
                     await getGameDetails(req, res)
+                    break
+            }
+            break
+        case 'generalSettings':
+            switch (method) {
+                case 'update':
+                    await updateGeneralSettings(req, res)
+                    break
+                case 'get':
+                    await getGeneralSettings(req, res)
                     break
             }
             break
@@ -269,10 +283,10 @@ const Map = async (model, method, req, res, index) => {
             break
         case 'CombatExtras':
             switch (method) {
-                case 'getCombatExtras':
+                case 'get':
                     await getCombatExtras(req, res)
                     break
-                case 'updateCombatExtras':
+                case 'update':
                     await updateCombatExtras(req, res)
                     break
                 default:
@@ -281,10 +295,10 @@ const Map = async (model, method, req, res, index) => {
             break
         case 'GlobalExperiences':
             switch (method) {
-                case 'getGlobalExperiences':
+                case 'get':
                     await getGlobalExperiences(req, res)
                     break
-                case 'updateGlobalExperiences':
+                case 'update':
                     await updateGlobalExperiences(req, res)
                     break
                 case 'AddNewWeaponType':
@@ -299,10 +313,10 @@ const Map = async (model, method, req, res, index) => {
             break
         case 'ExtraStats':
             switch (method) {
-                case 'getExtraStats':
+                case 'get':
                     await getExtraStats(req, res)
                     break
-                case 'updateExtraStats':
+                case 'update':
                     await updateExtraStats(req, res)
                     break
                 default:
@@ -311,10 +325,10 @@ const Map = async (model, method, req, res, index) => {
             break
         case 'GlobalWeaponTypes':
             switch (method) {
-                case 'getGlobalWeaponTypes':
+                case 'get':
                     await getGlobalWeaponTypes(req, res)
                     break
-                case 'updateGlobalWeaponTypes':
+                case 'update':
                     await updateGlobalWeaponTypes(req, res)
                     break
                 default:
