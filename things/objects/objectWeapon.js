@@ -10,6 +10,13 @@ const objectWeaponSchema = new Schema({
         required: true,
         default: 'New Weapon'
     },
+    weaponType: {
+        type: String,
+    },
+    minAptitude: {
+        type: String,
+        default: 'E'
+    },
     hasUses: {
         type: Boolean,
         default: false
