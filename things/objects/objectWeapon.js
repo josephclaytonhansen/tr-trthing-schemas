@@ -29,7 +29,7 @@ const objectWeaponSchema = new Schema({
     },
     scope: {
         type: String,
-        enum: ['combat', 'map', 'any'],
+        enum: ['combat', 'map', 'both'],
         default: 'both'
     },
     icon: {
