@@ -87,7 +87,7 @@ import {
     updateGeneralSettings
 } from './things_controllers/globalSettings/general.js'
 
-import {getObjects} from './things_controllers/object/object.js'
+import {getObjects, updateObjectSubtype} from './things_controllers/object/object.js'
 
 const Map = async (model, method, req, res, index) => {
     req.body.index = index
@@ -200,6 +200,9 @@ const Map = async (model, method, req, res, index) => {
             switch (method) {
                 case 'getObjects':
                     await getObjects(req, res)
+                    break
+                case 'updateSubtype':
+                    await updateObjectSubtype(req, res)
                     break
             }
             break
