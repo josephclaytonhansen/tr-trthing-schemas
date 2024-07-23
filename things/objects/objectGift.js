@@ -5,6 +5,7 @@ import {uid} from '../../server/functions/data_management/hexuids.js'
 
 const objectGiftSchema = new Schema({
     id: String,
+    subtype: {type: String, default: 'Gift'},
     name: {
         type: String,
         required: true,

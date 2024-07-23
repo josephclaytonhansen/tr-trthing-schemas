@@ -5,6 +5,7 @@ import {uid} from '../../server/functions/data_management/hexuids.js'
 
 const objectWeaponSchema = new Schema({
     id: String,
+    subtype: {type: String, default: 'Weapon'},
     name: {
         type: String,
         required: true,

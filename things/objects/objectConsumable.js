@@ -5,6 +5,7 @@ import {uid} from '../../server/functions/data_management/hexuids.js'
 
 const objectConsumableSchema = new Schema({
     id: String,
+    subtype: {type: String, default: 'Consumable'},
     name: {
         type: String,
         required: true,

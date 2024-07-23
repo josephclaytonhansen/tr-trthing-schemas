@@ -5,6 +5,7 @@ import {uid} from '../../server/functions/data_management/hexuids.js'
 
 const objectEquipableSchema = new Schema({
     id: String,
+    subtype: {type: String, default: 'Equipable'},
     name: {
         type: String,
         required: true,
