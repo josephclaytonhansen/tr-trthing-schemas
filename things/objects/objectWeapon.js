@@ -14,6 +14,9 @@ const objectWeaponSchema = new Schema({
     weaponType: {
         type: String,
     },
+    magicType: {
+        type: String,
+    },
     minAptitude: {
         type: String,
         default: 'E'
