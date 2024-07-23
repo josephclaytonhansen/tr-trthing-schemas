@@ -5,7 +5,7 @@ import {uid} from '../../server/functions/data_management/hexuids.js'
 
 const objectWeaponSchema = new Schema({
     id: String,
-    subtype: {type: String, default: 'Weapon'},
+    subtype: {type: String, default: 'Weapon', enum: ['Weapon', 'Magic']},
     name: {
         type: String,
         required: true,
@@ -46,11 +46,11 @@ const objectWeaponSchema = new Schema({
     },
     sellPrice: {
         type: Number,
-        default: 0
+        default: 75
     },
     buyPrice: {
         type: Number,
-        default: 0
+        default: 100
     },
     sellable: {
         type: Boolean,
@@ -59,6 +59,10 @@ const objectWeaponSchema = new Schema({
     buyable: {
         type: Boolean,
         default: true
+    },
+    sellPriceDeductedPerUse: {
+        type: Number,
+        default: 2
     },
     repairable: {
         type: Boolean,

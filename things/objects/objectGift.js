@@ -21,11 +21,11 @@ const objectGiftSchema = new Schema({
     },
     sellPrice: {
         type: Number,
-        default: 0
+        default: 75
     },
     buyPrice: {
         type: Number,
-        default: 0
+        default: 100
     },
     sellable: {
         type: Boolean,

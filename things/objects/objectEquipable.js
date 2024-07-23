@@ -21,11 +21,11 @@ const objectEquipableSchema = new Schema({
     },
     sellPrice: {
         type: Number,
-        default: 0
+        default: 75
     },
     buyPrice: {
         type: Number,
-        default: 0
+        default: 100
     },
     sellable: {
         type: Boolean,
@@ -34,6 +34,10 @@ const objectEquipableSchema = new Schema({
     buyable: {
         type: Boolean,
         default: true
+    },
+    sellPriceDeductedPerUse: {
+        type: Number,
+        default: 2
     },
     repairable: {
         type: Boolean,
