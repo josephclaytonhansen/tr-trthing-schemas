@@ -36,7 +36,7 @@ const objectWeaponSchema = new Schema({
     },
     flavorText: {
         type: String,
-        default: 'A consumable item'
+        default: 'A new item'
     },
     scope: {
         type: String,
