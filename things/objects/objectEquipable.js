@@ -35,10 +35,6 @@ const objectEquipableSchema = new Schema({
         type: Boolean,
         default: true
     },
-    sellPriceDeductedPerUse: {
-        type: Number,
-        default: 2
-    },
     repairable: {
         type: Boolean,
         default: false

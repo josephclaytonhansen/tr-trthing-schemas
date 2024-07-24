@@ -11,7 +11,7 @@ const objectConsumableSchema = new Schema({
         required: true,
         default: 'New Consumable'
     },
-    uses: {
+    maxUses: {
         type: Number,
         default: 1
     },
@@ -21,7 +21,7 @@ const objectConsumableSchema = new Schema({
     },
     scope: {
         type: String,
-        enum: ['combat', 'map', 'any'],
+        enum: ['combat', 'map', 'both'],
         default: 'both'
     },
     icon: {

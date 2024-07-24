@@ -23,15 +23,15 @@ const objectWeaponSchema = new Schema({
     },
     hasUses: {
         type: Boolean,
-        default: false
+        default: true
     },
-    uses: {
+    maxUses: {
         type: Number,
-        default: -1
+        default: 20
     },
     replenishUsesAfterBattleAmount: {
         type: String,
-        enum: ['full', 'half', 'none'],
+        enum: ['full', 'half', 'quarter', 'none'],
         default: 'none'
     },
     flavorText: {
