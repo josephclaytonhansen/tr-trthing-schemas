@@ -129,6 +129,19 @@ const attachGeneralSettings = async (req, res, next) => {
     next()
 }
 
+const checkKey = (req, res, next) => {
+    if (!req.body.userId) {
+        return res.status(400).json({success: false, message: 'No user ID provided'})
+    }
+    if (!req.body.key) {
+        return res.status(400).json({success: false, message: 'No key provided'})
+    }
+    if (!(req.body.key + '-' + process.env.HANDSHAKE_KEY === process.env.FULL_HANDSHAKE_KEY)) {
+        return res.status(500).json({success: false, message: 'Unable to establish a connection- key mismatch'})
+    }
+    next()
+}
+
 const setConnection = async (req, res, next) => {
     console.log("setConnection", req.body)
     if (!req.body.userId) {
@@ -160,14 +173,7 @@ app.get('/', async (req, res) => {
     res.status(200).json({success: true, message: 'Server is running'})
 })
 
-app.post('/', async (req, res) => {
-    if (!req.body.userId){
-        return res.status(400).json({success: false, message: 'No user ID provided'})
-    }
-    if (!req.body.key){
-        return res.status(400).json({success: false, message: 'No key provided'})
-    }
-
+app.post('/', checkKey, async (req, res) => {
     if (connections[req.body.userId] && req.body.key + '-' + process.env.HANDSHAKE_KEY === process.env.FULL_HANDSHAKE_KEY){
         return res.status(200).json({success: true, message: connections[req.body.userId].dbName})
     } 
@@ -176,17 +182,9 @@ app.post('/', async (req, res) => {
     }
 })
 
-app.post('/data', async (req, res) => {
+app.post('/data', checkKey, async (req, res) => {
     try{
     console.log("POST to /data", req.body)
-    if (!req.body.userId){
-        console.log('No user ID provided')
-        return res.status(400).json({success: false, message: 'No user ID provided'})
-    }
-    if (!req.body.key){
-        console.log('No key provided')
-        return res.status(400).json({success: false, message: 'No key provided'})
-    }
     if (connections[req.body.userId] && (req.body.key + '-' + process.env.HANDSHAKE_KEY) === process.env.FULL_HANDSHAKE_KEY){
         let db = connections[req.body.userId].db
         let actions = req.body.actions.actions || req.body.actions
@@ -205,14 +203,7 @@ app.post('/data', async (req, res) => {
     }
 })
 
-app.post('/upload-asset-pack', async (req, res) => {
-
-        if (!req.body.userId) {
-            return res.status(400).json({success: false, message: 'No user ID provided'})
-        }
-        if (!req.body.key) {
-            return res.status(400).json({success: false, message: 'No key provided'})
-        }
+app.post('/upload-asset-pack', checkKey, async (req, res) => {
         let db = connections[req.body.userId].db
         let assetPack = JSON.parse(req.body.assetPack)
 
