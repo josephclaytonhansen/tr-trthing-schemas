@@ -33,6 +33,7 @@ import GlobalWeaponTypesSchema from './things/globalSettings/weapontypes.js'
 import GlobalMagicTypesSchema from './things/globalSettings/magictypes.js'
 import GameDetailsSchema from './things/globalSettings/gamedetails.js'
 import GeneralSettingsSchema from './things/globalSettings/general.js'
+import ImageSchema from './things/graphics/images/images.js'
 
 import {checkHighest} from './server/functions/data_management/hexuids.js'
 
