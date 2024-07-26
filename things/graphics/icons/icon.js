@@ -1,4 +1,4 @@
-import {
+import mongoose, {
   Schema
 } from "mongoose"
 
@@ -17,6 +17,8 @@ const IconSchema = new Schema({
 })
 
 IconSchema.pre('save', async function (next) {
+  const Image = mongoose.model('Image')
+  
   if (this.components && this.components.length > 0) {
     try {
       const componentImages = await Image.find({

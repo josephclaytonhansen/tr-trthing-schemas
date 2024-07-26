@@ -93,6 +93,14 @@ import {
     getImage
 } from './things_controllers/graphics/images/images.js'
 
+import {
+    getIcons,
+    getIcon,
+    getIconByName,
+    createIcon,
+    updateIcon
+} from './things_controllers/graphics/icons/icons.js'
+
 import {getObjects, updateObjectSubtype} from './things_controllers/object/object.js'
 
 const Map = async (model, method, req, res, index) => {
@@ -105,6 +113,25 @@ const Map = async (model, method, req, res, index) => {
                     break
                 case 'get':
                     await getGlobalWeaponTypes(req, res)
+                    break
+            }
+            break
+        case 'Icon':
+            switch (method) {
+                case 'get':
+                    await getIcons(req, res)
+                    break
+                case 'getOne':
+                    await getIcon(req, res)
+                    break
+                case 'getOneByName':
+                    await getIconByName(req, res)
+                    break
+                case 'create':
+                    await createIcon(req, res)
+                    break
+                case 'update':
+                    await updateIcon(req, res)
                     break
             }
             break

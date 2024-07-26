@@ -226,6 +226,13 @@ app.post('/upload-asset-pack', async (req, res) => {
                 const imageBuffer = Buffer.from(response.data, 'binary')
     
                 let Image = db.model('Image', ImageSchema)
+                let existingImage = await Image.findOne({name: image.name, assetPack: assetPack.name})
+                if (existingImage) {
+                    existingImage.data = imageBuffer.toString('base64')
+                    existingImage.contentType = response.headers['content-type']
+                    existingImage.filename = image.url.split('/').pop()
+                    await existingImage.save()
+                } else {
                 let newImage = new Image({
                     filename: image.url.split('/').pop(),
                     contentType: response.headers['content-type'],
@@ -234,7 +241,7 @@ app.post('/upload-asset-pack', async (req, res) => {
                     assetPack: assetPack.name,
                     type: image.type,
                 })
-                await newImage.save()
+                await newImage.save()}
             } catch (error) {
                 console.error(`Failed to fetch or save image from URL ${image.url}:`, error)
                 res.status(200).json({success: false, message: 'Failed to fetch or save image from URL'})

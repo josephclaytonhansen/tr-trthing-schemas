@@ -1,6 +1,6 @@
-import asyncHandler from '../../middleware/asyncHandler.js'
+import asyncHandler from '../../../middleware/asyncHandler.js'
 
-import ImageSchema from '../../../things/graphics/images/images.js'
+import ImageSchema from '../../../../things/graphics/images/images.js'
 
 const getImagesByType = asyncHandler(async (req, res) => {
     const Image = req.connection.model('Image', ImageSchema)
