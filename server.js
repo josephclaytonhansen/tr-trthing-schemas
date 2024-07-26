@@ -24,6 +24,8 @@ if (fs.existsSync(connectionsFilePath)) {
 dotenv.config()
 
 import express from 'express'
+import axios from 'axios'
+
 import CombatExtrasSchema from './things/globalSettings/combat/combatextras.js'
 import GlobalExperiencesSchema from './things/globalSettings/experiences.js'
 import ExtraStatsSchema from './things/globalSettings/extrastats.js'
@@ -140,7 +142,6 @@ const setConnection = async (req, res, next) => {
             connection: connection,
             dbName: dbName,
             db: mongoose.connection.useDb(dbName),
-            ip: Buffer.from(req.ip).toString('base64')
         }
         console.log('Database Connected')
         await init(connection)
@@ -202,6 +203,44 @@ app.post('/data', async (req, res) => {
         console.error(err)
         return res.status(500).json({success: false, message: 'Error processing request'})
     }
+})
+
+app.post('/upload-asset-pack', async (req, res) => {
+
+        if (!req.body.userId) {
+            return res.status(400).json({success: false, message: 'No user ID provided'})
+        }
+        if (!req.body.key) {
+            return res.status(400).json({success: false, message: 'No key provided'})
+        }
+        let db = connections[req.body.userId].db
+        let assetPack = JSON.parse(req.body.assetPack)
+
+        let images = assetPack.images
+        images.forEach(async image => {
+            try {
+                const response = await axios.get(image.url, { responseType: 'arraybuffer' })
+                if (response.headers['content-type'].split('/')[0] !== 'image') {
+                    res.status(200).json({success: false, message: 'URL does not point to an image'})
+                }
+                const imageBuffer = Buffer.from(response.data, 'binary')
+    
+                let Image = db.model('Image', ImageSchema)
+                let newImage = new Image({
+                    filename: image.url.split('/').pop(),
+                    contentType: response.headers['content-type'],
+                    data: imageBuffer.toString('base64'),
+                    name: image.name,
+                    assetPack: assetPack.name,
+                    type: image.type,
+                })
+                await newImage.save()
+            } catch (error) {
+                console.error(`Failed to fetch or save image from URL ${image.url}:`, error)
+                res.status(200).json({success: false, message: 'Failed to fetch or save image from URL'})
+            }
+        })
+        res.status(200).json({success: true, message: 'Asset pack uploaded'})
 })
 
 const init = async(connection) => {

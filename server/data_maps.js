@@ -87,6 +87,12 @@ import {
     updateGeneralSettings
 } from './things_controllers/globalSettings/general.js'
 
+import {
+    getImagesByType,
+    getImagesByAssetPack,
+    getImage
+} from './things_controllers/graphics/images/images.js'
+
 import {getObjects, updateObjectSubtype} from './things_controllers/object/object.js'
 
 const Map = async (model, method, req, res, index) => {
@@ -102,6 +108,18 @@ const Map = async (model, method, req, res, index) => {
                     break
             }
             break
+        case 'Images':
+            switch (method) {
+                case 'getImagesByType':
+                    await getImagesByType(req, res)
+                    break
+                case 'getImagesByAssetPack':
+                    await getImagesByAssetPack(req, res)
+                    break
+                case 'getImage':
+                    await getImage(req, res)
+                    break
+            }
         case 'gameDetails':
             switch (method) {
                 case 'update':
