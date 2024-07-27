@@ -1,15 +1,12 @@
-import mongoose from 'mongoose'
 import { Schema } from 'mongoose'
 
-import {uid} from '../../server/functions/data_management/hexuids.js'
-
-const objectWeaponSchema = new Schema({
+const ObjectSchema = new Schema({
     id: String,
-    subtype: {type: String, default: 'Weapon', enum: ['Weapon', 'Magic']},
+    subtype: {type: String, default: 'Weapon', enum: ['Weapon', 'Magic', 'Consumable', 'Equipable', 'Gift']},
     name: {
         type: String,
         required: true,
-        default: 'New Weapon'
+        default: 'New Item'
     },
     weaponType: {
         type: String,
@@ -138,7 +135,32 @@ const objectWeaponSchema = new Schema({
     otherEffects: {
         type: Object,
         default: {}
-    }
+    },
+    giftRank: {
+        type: Number,
+        default: 1,
+        enum: [1, 2, 3, 4, 5]
+    },
+    lowerRange: {
+        type: Number,
+        default: 0
+    },
+    upperRange: {
+        type: Number,
+        default: 0
+    },
+    rangeAdjustedByStat: {
+        type: Boolean,
+        default: false
+    },
+    rangeAdjustedByStatName: {
+        type: String,
+        default: ''
+    },
+    rangeAdjustedByDivisor: {
+        type: Number,
+        default: 1
+    },
 })
 
-export default objectWeaponSchema
+export default ObjectSchema
