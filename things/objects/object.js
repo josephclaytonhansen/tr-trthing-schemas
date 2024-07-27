@@ -141,6 +141,13 @@ const ObjectSchema = new Schema({
         default: 1,
         enum: [1, 2, 3, 4, 5]
     },
+    lostItem: {
+        type: Boolean,
+        default: false
+    },
+    belongsTo: {
+        type: String,
+    },
     lowerRange: {
         type: Number,
         default: 0
