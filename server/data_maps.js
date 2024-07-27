@@ -158,19 +158,19 @@ const Map = async (model, method, req, res, index) => {
         case 'Object':
             switch (method) 
             {
-                case 'getObject':
+                case 'get':
                     await getObject(req, res)
                     break
                 case 'getObjects':
                     await getObjects(req, res)
                     break
-                case 'createObject':
+                case 'create':
                     await createObject(req, res)
                     break
-                case 'deleteObject':
+                case 'delete':
                     await deleteObject(req, res)
                     break
-                case 'updateObject':
+                case 'update':
                     await updateObject(req, res)
                     break
             }
