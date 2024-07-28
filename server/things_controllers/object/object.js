@@ -53,6 +53,17 @@ const deleteObject = asyncHandler(async (req, res) => {
 
 const updateObject = asyncHandler(async (req, res) => {
     const Object = req.connection.model('Object', ObjectSchema)
+    const Person = req.connection.model('Person', PersonSchema)
+
+    let belongsToArray = req.body.belongsTo.split(' ')
+    let belongsTo = belongsToArray[belongsToArray.length - 1]
+    let personBelongsTo = await Person.findOne({
+        id: belongsTo
+    })
+    if (personBelongsTo) {
+        req.body.belongsTo = personBelongsTo._id
+    }
+    
     await Object.findOneAndUpdate({
         id: req.body.id
     }, req.body).then(async (object) => {

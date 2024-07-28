@@ -66,19 +66,19 @@ const ObjectSchema = new Schema({
     },
     repairable: {
         type: Boolean,
-        default: false
+        default: true
     },
     repairPricePerUse: {
         type: Number,
-        default: 0
+        default: 10
     },
     repairNeedsItems: {
         type: Boolean,
-        default: false
+        default: true
     },
     repairItem: {
         type: Schema.Types.ObjectId,
-        ref: 'ObjectConsumable'
+        ref: 'Object'
     },
     forgeable: {
         type: Boolean,
@@ -86,7 +86,7 @@ const ObjectSchema = new Schema({
     },
     forgeInto: {
         type: [Schema.Types.ObjectId],
-        ref: 'ObjectConsumable'
+        ref: 'Object'
     },
     forgePrices: {
         type: [Number],
@@ -98,7 +98,11 @@ const ObjectSchema = new Schema({
     },
     forgeItems: {
         type: [Schema.Types.ObjectId],
-        ref: 'ObjectConsumable'
+        ref: 'Object'
+    },
+    repairItemAmountPerUse: {
+        type: Number,
+        default: 1
     },
     lowerRange: {
         type: Number,
@@ -146,7 +150,14 @@ const ObjectSchema = new Schema({
         default: false
     },
     belongsTo: {
-        type: String,
+        type: Schema.Types.ObjectId,
+        ref: 'Person'
+    },
+    unitsLove: {
+        type: [String]
+    },
+    unitsHate: {
+        type: [String]
     },
     lowerRange: {
         type: Number,

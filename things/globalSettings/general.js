@@ -3,6 +3,8 @@ import { Schema } from 'mongoose'
 const GeneralSettingsSchema = new Schema({
     UseWeatherOnLevels: {type: Boolean, default: false},
     unitsCanHaveChildren: {type: Boolean, default: true},
+    weaponsCanBeForged: {type: Boolean, default: true},
+    weaponsCanBeRepaired: {type: Boolean, default: true},
     useExperienceSublevels: {type: Boolean, default: false},
     useExperienceAptitudes: {type: Boolean, default: true},
     unitEditorAvatarDefaultHairColor: {type: String, default: 'rgb(39, 31, 86)'},
