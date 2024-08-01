@@ -4,7 +4,6 @@ import {
 
 const ImageSchema = new Schema({
     name: String,
-    filename: String,
     contentType: String,
     data: Buffer,
     assetPack: String,

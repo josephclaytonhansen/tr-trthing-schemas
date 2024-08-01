@@ -30,11 +30,12 @@ const createIcon = asyncHandler(async (req, res) => {
 })
 
 const updateIcon = asyncHandler(async (req, res) => {
+    console.log('updating icon', req.body.actions.actions)
     const Icon = req.connection.model('Icon', IconSchema)
-    const icon = await Icon.findOneAndUpdate({id: req.body.id}, req.body, {
-        new: true,
-        runValidators: true
-    })
+    const icon = await Icon.findOne({id: req.body.id})
+    console.log(icon)
+    icon.components = req.body.actions.actions[req.body.index].body.components
+    await icon.save()
     res.json(icon)
 })
 
