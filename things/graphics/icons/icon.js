@@ -46,13 +46,10 @@ IconSchema.pre('save', async function (next) {
             componentImages.push(existing)
           } else {
           if (res){
-          let i = new Image({
-            contentType: 'image/png',
+          componentImages.push({
+            data: res.data,
             name: url + '.' + element.name,
-            data: res.data
-          })
-          await i.save()
-          componentImages.push(i)}}
+          })}}
         } catch (err) {
           console.log(err)
         }
