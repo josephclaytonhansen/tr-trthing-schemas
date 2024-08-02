@@ -33,8 +33,7 @@ const updateIcon = asyncHandler(async (req, res) => {
     console.log('updating icon', req.body.actions.actions)
     const Icon = req.connection.model('Icon', IconSchema)
     const icon = await Icon.findOne({id: req.body.id})
-    console.log(icon)
-    icon.components = req.body.actions.actions[req.body.index].body.components
+    icon.compositeImage = req.body.actions.actions[req.body.index].body.compositeImage
     await icon.save()
     res.json(icon)
 })
